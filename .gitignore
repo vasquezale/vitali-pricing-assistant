@@ -36,6 +36,7 @@ artifacts/checkpoints/
 # === Documentacion interna / coordinacion privada ===
 AGENTS.md
 CLAUDE.md
+PROJECT_STATUS.md
 context/
 research/
 notebooks/

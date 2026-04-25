@@ -8,8 +8,6 @@
 
 Early development. Project scaffolding is in place, Phase 1 is still being closed, and Phase 2 remains blocked until Airbnb raw data is available locally under `data/raw/`.
 
-The current safe project snapshot, GitHub publication state, and next-session checklist live in [PROJECT_STATUS.md](PROJECT_STATUS.md).
-
 ## Repo vs Vault
 
 This repository is intentionally limited to **practical, executable project assets**:
