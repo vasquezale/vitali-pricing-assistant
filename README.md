@@ -37,6 +37,21 @@ uv sync --extra dev
 uv run bash scripts/run_quality_checks.sh
 ```
 
+## Safe Publication Flow
+
+```bash
+# 1. Work from the public-safe branch
+git switch codex/public-ready
+
+# 2. Run quality checks
+uv run bash scripts/run_quality_checks.sh
+
+# 3. Run the pre-push security review
+bash scripts/pre_push_security_check.sh
+```
+
+Create the first GitHub remote from `codex/public-ready`, never from `main`.
+
 ## Project Structure
 
 ```
