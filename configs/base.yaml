@@ -1,0 +1,30 @@
+# Proyecto Vitali — Base Configuration
+
+project:
+  name: "proyecto-vitali"
+  version: "0.1.0"
+  seed: 42
+
+paths:
+  raw: "data/raw"
+  sanitized: "data/sanitized"
+  interim: "data/interim"
+  processed: "data/processed"
+  external: "data/external"
+  artifacts: "artifacts"
+
+data:
+  # Completar en Fase 2 después de inspeccionar el raw
+  # source_file: "reservations.csv"
+  # date_column: "check_in"
+  # price_column: "nightly_rate"
+  # currency: "USD"  # o "CRC"
+
+modeling:
+  test_window_months: 1
+  min_train_months: 6
+  confidence_level: 0.95
+
+wandb:
+  project: "proyecto-vitali"
+  entity: null  # Completar con usuario W&B

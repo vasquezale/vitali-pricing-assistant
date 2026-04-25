@@ -1,0 +1,63 @@
+[project]
+name = "proyecto-vitali"
+version = "0.1.0"
+description = "Pricing assistant and decision support system for an Airbnb in Cartago, Costa Rica"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas>=2.2.0",
+    "numpy>=1.26.0",
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.0",
+    "plotly>=5.18.0",
+    "scikit-learn>=1.4.0",
+    "statsmodels>=0.14.0",
+    "pyyaml>=6.0.0",
+    "openpyxl>=3.1.0",
+]
+
+[project.optional-dependencies]
+ml = [
+    "xgboost>=2.0.0",
+    "lightgbm>=4.2.0",
+    "shap>=0.44.0",
+]
+dashboard = [
+    "streamlit>=1.30.0",
+]
+tracking = [
+    "wandb>=0.16.0",
+]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.2.0",
+    "pylint>=3.0.0",
+]
+all = [
+    "proyecto-vitali[ml,dashboard,tracking,dev]",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vitali"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I"]
+
+[tool.pylint.main]
+fail-under = 9.5
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint."messages control"]
+disable = ["too-many-arguments", "too-few-public-methods"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,77 @@
+# === Datos del negocio y PII — NUNCA se suben ===
+data/
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+
+# === Secretos y credenciales ===
+.env
+.env.*
+!.env.example
+secrets/
+credentials/
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.csr
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# === Artefactos locales/pesados ===
+artifacts/models/
+artifacts/scalers/
+artifacts/checkpoints/
+
+# === Vault / herramientas personales ===
+.obsidian/
+.claude/
+.codex/
+.cursor/
+
+# === Documentacion interna / coordinacion privada ===
+AGENTS.md
+CLAUDE.md
+context/
+research/
+notebooks/
+docs/
+
+# === Python ===
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+.hypothesis/
+*.egg-info/
+dist/
+*.so
+
+# === Environment ===
+.venv/
+.python-version
+
+# === W&B ===
+wandb/
+
+# === IDEs ===
+.vscode/
+.idea/
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Jupyter ===
+.ipynb_checkpoints/
+
+# === Markdown ===
+# No se usa una excepción global para *.md.
+# Solo se deben trackear archivos Markdown intencionales y seguros.
