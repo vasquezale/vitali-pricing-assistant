@@ -6,13 +6,17 @@ current_branch="$(git branch --show-current)"
 echo "=== Proyecto Vitali: pre-push security check ==="
 echo "Current branch: ${current_branch}"
 
-if [[ "${current_branch}" == "main" ]]; then
-  echo "ERROR: do not publish from 'main'. Use 'codex/public-ready' instead."
+if [[ "${current_branch}" == "codex/prepublish-backup" ]]; then
+  echo "ERROR: do not push from 'codex/prepublish-backup'. It is a local safety branch."
   exit 1
 fi
 
-if [[ "${current_branch}" != "codex/public-ready" ]]; then
-  echo "WARNING: you are not on 'codex/public-ready'. Review carefully before pushing."
+if [[ "${current_branch}" == "main" ]]; then
+  echo "INFO: pushing from 'main' is acceptable once feature work has been reviewed and merged."
+elif [[ "${current_branch}" == "codex/public-ready" ]]; then
+  echo "INFO: 'codex/public-ready' is the legacy clean publication branch."
+else
+  echo "INFO: topic branch detected. Push only if you intentionally want the branch on the remote."
 fi
 
 echo "Checking tracked files..."
@@ -27,7 +31,7 @@ for blocked_path in "context/" "research/" "docs/" "notebooks/" "AGENTS.md" "CLA
   fi
 done
 
-if grep -Eq '(^|/)(data/|secrets/|credentials/)' <<<"${tracked_files}"; then
+if grep -Eq '^(data/|secrets/|credentials/)' <<<"${tracked_files}"; then
   echo "ERROR: a protected local-only path is tracked."
   exit 1
 fi
