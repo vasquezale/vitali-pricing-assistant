@@ -37,6 +37,36 @@ uv sync --extra dev
 uv run bash scripts/run_quality_checks.sh
 ```
 
+## Reproducible Income Analysis Base
+
+The project now includes a minimal reproducible path for the anonymized income extract.
+
+1. Place the sanitized CSV at `data/external/DatosVitali_ingresos_anonimizados.csv`
+   or pass a custom path with `--input`.
+2. Generate a compact JSON profile:
+
+```bash
+uv run python scripts/profile_income_data.py \
+  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --output artifacts/income_profile.json
+```
+
+This step validates the extract, parses dates, preserves the mixed `USD` / `CRC`
+context, and emits a profile segmented by currency and room identifier.
+
+To generate a more analytical descriptive summary:
+
+```bash
+uv run python scripts/summarize_income_data.py \
+  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --json-output artifacts/income_summary.json \
+  --markdown-output artifacts/income_summary.md
+```
+
+This summary stays within the current project guardrails: it is descriptive and
+reproducible, but it is not a substitute for profitability modeling, market
+analysis, or a formal Fase 2 gate.
+
 ## Safe Publication Flow
 
 ```bash

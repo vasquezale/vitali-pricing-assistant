@@ -1,0 +1,74 @@
+{
+  "source_rows": 301,
+  "reservation_rows": 296,
+  "resolution_payment_rows": 5,
+  "currencies": [
+    "CRC",
+    "USD"
+  ],
+  "units": [
+    "room_a",
+    "room_b"
+  ],
+  "date_range": {
+    "check_in_min": "2024-05-04",
+    "check_in_max": "2026-01-30"
+  },
+  "reservations_by_currency": [
+    {
+      "currency": "CRC",
+      "reservations": 225,
+      "nights": 244.0,
+      "median_booking_lead_days": 13.0
+    },
+    {
+      "currency": "USD",
+      "reservations": 71,
+      "nights": 84.0,
+      "median_booking_lead_days": 9.0
+    }
+  ],
+  "unit_currency_metrics": [
+    {
+      "unit_id": "room_a",
+      "currency": "CRC",
+      "reservations": 109,
+      "nights": 116.0,
+      "median_gross_adr": 69000.0,
+      "median_net_adr": 66660.9,
+      "median_booking_lead_days": 10.0
+    },
+    {
+      "unit_id": "room_a",
+      "currency": "USD",
+      "reservations": 34,
+      "nights": 41.0,
+      "median_gross_adr": 165.0,
+      "median_net_adr": 159.41,
+      "median_booking_lead_days": 9.5
+    },
+    {
+      "unit_id": "room_b",
+      "currency": "CRC",
+      "reservations": 116,
+      "nights": 128.0,
+      "median_gross_adr": 77000.0,
+      "median_net_adr": 74392.10500000001,
+      "median_booking_lead_days": 14.5
+    },
+    {
+      "unit_id": "room_b",
+      "currency": "USD",
+      "reservations": 37,
+      "nights": 43.0,
+      "median_gross_adr": 200.0,
+      "median_net_adr": 193.22,
+      "median_booking_lead_days": 9.0
+    }
+  ],
+  "stay_length_distribution": {
+    "1": 264,
+    "2": 32
+  },
+  "source_name": "DatosVitali_ingresos_anonimizados.csv"
+}
