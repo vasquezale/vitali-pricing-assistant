@@ -1,5 +1,7 @@
 # === Datos del negocio y PII — NUNCA se suben ===
 data/
+!src/vitali/data/
+!src/vitali/data/*.py
 *.db
 *.db-*
 *.sqlite

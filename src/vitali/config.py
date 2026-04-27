@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -28,6 +29,35 @@ class ModelingConfig:
 
 
 @dataclass
+class IncomeDataConfig:
+    """Income extract settings for reproducible exploratory analysis."""
+
+    source_file: str = "data/external/DatosVitali_ingresos_anonimizados.csv"
+    date_columns: list[str] = field(
+        default_factory=lambda: ["movement_date", "booking_date", "check_in", "check_out"]
+    )
+    required_columns: list[str] = field(
+        default_factory=lambda: [
+            "record_type",
+            "movement_date",
+            "booking_date",
+            "check_in",
+            "check_out",
+            "nights",
+            "unit_id",
+            "currency",
+            "net_amount",
+            "service_fee",
+            "cleaning_fee",
+            "gross_income",
+            "booking_lead_days",
+        ]
+    )
+    allowed_record_types: list[str] = field(default_factory=lambda: ["reservation", "resolution_payment"])
+    allowed_currencies: list[str] = field(default_factory=lambda: ["USD", "CRC"])
+
+
+@dataclass
 class Config:
     """Top-level project configuration."""
 
@@ -36,15 +66,17 @@ class Config:
     seed: int = 42
     paths: PathsConfig = field(default_factory=PathsConfig)
     modeling: ModelingConfig = field(default_factory=ModelingConfig)
+    income_data: IncomeDataConfig = field(default_factory=IncomeDataConfig)
 
     @classmethod
     def from_yaml(cls, path: str | Path = "configs/base.yaml") -> "Config":
         """Load configuration from a YAML file."""
         with open(path, encoding="utf-8") as f:
-            raw = yaml.safe_load(f)
+            raw: dict[str, Any] = yaml.safe_load(f) or {}
 
         paths = PathsConfig(**raw.get("paths", {}))
         modeling = ModelingConfig(**raw.get("modeling", {}))
+        income_data = IncomeDataConfig(**raw.get("income_data", {}))
         project = raw.get("project", {})
 
         return cls(
@@ -53,4 +85,5 @@ class Config:
             seed=project.get("seed", cls.seed),
             paths=paths,
             modeling=modeling,
+            income_data=income_data,
         )

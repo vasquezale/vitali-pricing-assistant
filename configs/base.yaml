@@ -20,6 +20,34 @@ data:
   # price_column: "nightly_rate"
   # currency: "USD"  # o "CRC"
 
+income_data:
+  source_file: "data/external/DatosVitali_ingresos_anonimizados.csv"
+  date_columns:
+    - "movement_date"
+    - "booking_date"
+    - "check_in"
+    - "check_out"
+  required_columns:
+    - "record_type"
+    - "movement_date"
+    - "booking_date"
+    - "check_in"
+    - "check_out"
+    - "nights"
+    - "unit_id"
+    - "currency"
+    - "net_amount"
+    - "service_fee"
+    - "cleaning_fee"
+    - "gross_income"
+    - "booking_lead_days"
+  allowed_record_types:
+    - "reservation"
+    - "resolution_payment"
+  allowed_currencies:
+    - "USD"
+    - "CRC"
+
 modeling:
   test_window_months: 1
   min_train_months: 6
