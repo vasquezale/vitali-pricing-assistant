@@ -1,5 +1,8 @@
 # === Datos del negocio y PII — NUNCA se suben ===
-data/
+# Excepción: data/raw/ es versionado (XLSX source-of-truth)
+data/*
+!data/raw/
+!data/raw/**
 !src/vitali/data/
 !src/vitali/data/*.py
 *.db
