@@ -1,0 +1,8 @@
+{
+  "input": "/Users/ale/Documents/GitHub_Repositorios/proyecto-vitali/data/sanitized/income_reservations_fx_crc_sanitized.parquet",
+  "reservation_rows": 296,
+  "currencies": [
+    "CRC",
+    "USD"
+  ]
+}

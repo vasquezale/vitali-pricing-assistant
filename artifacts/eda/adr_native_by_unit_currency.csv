@@ -1,0 +1,5 @@
+currency,unit_id,count,median,q25,q75
+CRC,room_a,109,69000.0,60000.0,70000.0
+CRC,room_b,116,77000.0,77000.0,85000.0
+USD,room_a,34,165.0,140.0,180.0
+USD,room_b,37,200.0,170.0,210.0

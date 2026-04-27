@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Pricing assistant and decision support system for an Airbnb in Cartago, Costa Rica"
 requires-python = ">=3.12"
 dependencies = [
+    "pyarrow>=16.0.0",
     "pandas>=2.2.0",
     "numpy>=1.26.0",
     "matplotlib>=3.8.0",

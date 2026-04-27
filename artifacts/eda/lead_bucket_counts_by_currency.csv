@@ -1,0 +1,11 @@
+currency,lead_bucket,count
+CRC,0-3,34
+CRC,15-30,69
+CRC,31+,37
+CRC,4-7,43
+CRC,8-14,42
+USD,0-3,21
+USD,15-30,16
+USD,31+,3
+USD,4-7,6
+USD,8-14,25

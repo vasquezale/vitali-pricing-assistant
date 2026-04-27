@@ -44,6 +44,9 @@ def test_prepare_income_preserves_currency_and_uses_crc_columns(repo_root: Path)
     assert "currency" in df.columns
     assert "gross_income_crc" in df.columns
     assert df["gross_income_crc"].notna().any()
+    dup_merge = [c for c in df.columns if c.endswith("_x") or c.endswith("_y")]
+    assert not dup_merge, f"unexpected merge suffix columns: {dup_merge}"
+    assert "booking_lead_days" in df.columns
 
 
 def test_prepare_expenses_adds_bucket(repo_root: Path) -> None:

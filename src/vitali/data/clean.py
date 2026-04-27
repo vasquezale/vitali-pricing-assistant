@@ -69,6 +69,9 @@ def prepare_income_from_raw_airbnb(
         "check_in_context",
         "check_in_weekday",
     ]
+    # Raw extract already includes booking_lead_days; FX table repeats it — merge once from reservations.
+    if "booking_lead_days" in reservations.columns:
+        fx_cols = [c for c in fx_cols if c != "booking_lead_days"]
     fx_small = fx[join_keys + [c for c in fx_cols if c in fx.columns]].drop_duplicates()
 
     merged = reservations.merge(fx_small, on=join_keys, how="left", validate="many_to_one")
