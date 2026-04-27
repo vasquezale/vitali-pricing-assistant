@@ -86,6 +86,15 @@ uv run python scripts/build_income_analysis_table.py \
   --fx-rates-json '{"USD":510.0,"CRC":1.0}'
 ```
 
+The same policy can be declared in [configs/base.yaml](/Users/ale/Documents/GitHub_Repositorios/proyecto-vitali/configs/base.yaml)
+under `fx_normalization`. The recommended default for the current phase is:
+
+- `enabled: false`
+- `strategy: preserve_original`
+
+Only switch to `manual_static` when you have explicitly chosen and documented
+the rates you want to use for comparison in CRC.
+
 ## Safe Publication Flow
 
 ```bash

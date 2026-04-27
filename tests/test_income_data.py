@@ -5,13 +5,14 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from vitali.config import IncomeDataConfig
+from vitali.config import FxNormalizationConfig, IncomeDataConfig
 from vitali.data.income import (
     build_income_analysis_table,
     build_income_profile,
     build_income_summary,
     load_income_data,
     render_income_summary_markdown,
+    resolve_fx_rates,
 )
 
 
@@ -123,3 +124,29 @@ def test_build_income_analysis_table_normalizes_when_fx_rates_are_provided(sampl
     assert crc_row["fx_normalization_status"] == "normalized_to_crc"
     assert usd_row["gross_income_crc"] == pytest.approx(124.0 * 510.0)
     assert crc_row["gross_income_crc"] == pytest.approx(186000.0)
+
+
+def test_resolve_fx_rates_returns_none_for_preserve_original() -> None:
+    policy = FxNormalizationConfig(enabled=False, strategy="preserve_original")
+
+    assert resolve_fx_rates(policy) is None
+
+
+def test_resolve_fx_rates_builds_manual_static_policy() -> None:
+    policy = FxNormalizationConfig(
+        enabled=True,
+        strategy="manual_static",
+        target_currency="CRC",
+        rates_to_crc={"USD": 510.0},
+    )
+
+    rates = resolve_fx_rates(policy)
+
+    assert rates == {"USD": 510.0, "CRC": 1.0}
+
+
+def test_resolve_fx_rates_rejects_missing_manual_rates() -> None:
+    policy = FxNormalizationConfig(enabled=True, strategy="manual_static", target_currency="CRC")
+
+    with pytest.raises(ValueError, match="no rates_to_crc"):
+        resolve_fx_rates(policy)

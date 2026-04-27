@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 from vitali.config import Config
-from vitali.data.income import build_income_analysis_table, load_income_data
+from vitali.data.income import build_income_analysis_table, load_income_data, resolve_fx_rates
 
 
 def parse_args() -> argparse.Namespace:
@@ -23,7 +23,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--fx-rates-json",
         default=None,
-        help="Optional JSON object with currency-to-CRC rates, e.g. '{\"USD\":510.0,\"CRC\":1.0}'.",
+        help="Optional JSON object with currency-to-CRC rates, e.g. '{\"USD\":510.0,\"CRC\":1.0}'. Overrides config.",
     )
     return parser.parse_args()
 
@@ -34,7 +34,7 @@ def main() -> None:
     config = Config.from_yaml(args.config)
     input_path = args.input or config.income_data.source_file
     dataset = load_income_data(input_path, config.income_data)
-    fx_rates = json.loads(args.fx_rates_json) if args.fx_rates_json else None
+    fx_rates = json.loads(args.fx_rates_json) if args.fx_rates_json else resolve_fx_rates(config.fx_normalization)
 
     table = build_income_analysis_table(dataset.records, fx_rates_to_crc=fx_rates)
 
@@ -46,6 +46,7 @@ def main() -> None:
         "rows": int(len(table)),
         "currencies": sorted(table["currency"].dropna().unique().tolist()),
         "fx_normalization_status": table["fx_normalization_status"].value_counts(dropna=False).to_dict(),
+        "fx_rates_to_crc": fx_rates,
         "output": str(output_path),
     }
     print(json.dumps(preview, indent=2, ensure_ascii=True))

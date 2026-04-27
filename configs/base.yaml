@@ -48,6 +48,12 @@ income_data:
     - "USD"
     - "CRC"
 
+fx_normalization:
+  enabled: false
+  strategy: "preserve_original"
+  target_currency: "CRC"
+  rates_to_crc: {}
+
 modeling:
   test_window_months: 1
   min_train_months: 6

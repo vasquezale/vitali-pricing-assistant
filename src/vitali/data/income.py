@@ -8,7 +8,7 @@ from typing import Mapping
 
 import pandas as pd
 
-from vitali.config import IncomeDataConfig
+from vitali.config import FxNormalizationConfig, IncomeDataConfig
 
 
 @dataclass
@@ -277,6 +277,37 @@ def build_income_analysis_table(
         "fx_normalization_status",
     ]
     return reservations[selected_columns].sort_values(["check_in", "unit_id"]).reset_index(drop=True)
+
+
+def resolve_fx_rates(config: FxNormalizationConfig) -> dict[str, float] | None:
+    """Resolve the configured FX normalization policy into concrete rates or none.
+
+    Supported strategies:
+    - preserve_original: keep original currencies untouched.
+    - manual_static: normalize using explicit user-declared currency-to-CRC rates.
+    """
+    if not config.enabled or config.strategy == "preserve_original":
+        return None
+
+    if config.strategy != "manual_static":
+        raise ValueError(f"Unsupported FX normalization strategy: {config.strategy}")
+
+    if config.target_currency != "CRC":
+        raise ValueError("Current implementation only supports CRC as target currency.")
+
+    rates = dict(config.rates_to_crc)
+    if not rates:
+        raise ValueError("FX normalization is enabled but no rates_to_crc were provided.")
+
+    if "CRC" not in rates:
+        rates["CRC"] = 1.0
+
+    invalid_rates = [currency for currency, rate in rates.items() if rate <= 0]
+    if invalid_rates:
+        invalid = ", ".join(sorted(invalid_rates))
+        raise ValueError(f"FX normalization rates must be positive for: {invalid}")
+
+    return rates
 
 
 def render_income_summary_markdown(summary: dict[str, object], source_name: str) -> str:

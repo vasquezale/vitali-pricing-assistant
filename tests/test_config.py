@@ -1,6 +1,6 @@
 """Tests for configuration loading."""
 
-from vitali.config import Config, IncomeDataConfig, ModelingConfig, PathsConfig
+from vitali.config import Config, FxNormalizationConfig, IncomeDataConfig, ModelingConfig, PathsConfig
 
 
 def test_config_from_yaml(config: Config) -> None:
@@ -9,6 +9,7 @@ def test_config_from_yaml(config: Config) -> None:
     assert isinstance(config.paths, PathsConfig)
     assert isinstance(config.modeling, ModelingConfig)
     assert isinstance(config.income_data, IncomeDataConfig)
+    assert isinstance(config.fx_normalization, FxNormalizationConfig)
 
 
 def test_config_defaults() -> None:
@@ -17,3 +18,4 @@ def test_config_defaults() -> None:
     assert cfg.paths.raw == "data/raw"
     assert cfg.modeling.confidence_level == 0.95
     assert cfg.income_data.allowed_currencies == ["USD", "CRC"]
+    assert cfg.fx_normalization.strategy == "preserve_original"

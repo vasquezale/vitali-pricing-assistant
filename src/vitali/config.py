@@ -58,6 +58,16 @@ class IncomeDataConfig:
 
 
 @dataclass
+class FxNormalizationConfig:
+    """Explicit foreign-exchange normalization policy for income analysis."""
+
+    enabled: bool = False
+    strategy: str = "preserve_original"
+    target_currency: str = "CRC"
+    rates_to_crc: dict[str, float] = field(default_factory=dict)
+
+
+@dataclass
 class Config:
     """Top-level project configuration."""
 
@@ -67,6 +77,7 @@ class Config:
     paths: PathsConfig = field(default_factory=PathsConfig)
     modeling: ModelingConfig = field(default_factory=ModelingConfig)
     income_data: IncomeDataConfig = field(default_factory=IncomeDataConfig)
+    fx_normalization: FxNormalizationConfig = field(default_factory=FxNormalizationConfig)
 
     @classmethod
     def from_yaml(cls, path: str | Path = "configs/base.yaml") -> "Config":
@@ -77,6 +88,7 @@ class Config:
         paths = PathsConfig(**raw.get("paths", {}))
         modeling = ModelingConfig(**raw.get("modeling", {}))
         income_data = IncomeDataConfig(**raw.get("income_data", {}))
+        fx_normalization = FxNormalizationConfig(**raw.get("fx_normalization", {}))
         project = raw.get("project", {})
 
         return cls(
@@ -86,4 +98,5 @@ class Config:
             paths=paths,
             modeling=modeling,
             income_data=income_data,
+            fx_normalization=fx_normalization,
         )
