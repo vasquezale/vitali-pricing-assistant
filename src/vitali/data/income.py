@@ -316,6 +316,37 @@ def build_income_segment_summary(analysis_table: pd.DataFrame) -> dict[str, obje
     }
 
 
+def build_income_visual_summary(analysis_table: pd.DataFrame) -> dict[str, object]:
+    """Aggregate reservation signals for lightweight time-series visualization."""
+    summary_scope = {
+        "rows": int(len(analysis_table)),
+        "currencies": sorted(analysis_table["currency"].dropna().unique().tolist()),
+        "units": sorted(analysis_table["unit_id"].dropna().unique().tolist()),
+        "check_in_min": _to_optional_date(analysis_table["check_in"].min()),
+        "check_in_max": _to_optional_date(analysis_table["check_in"].max()),
+    }
+
+    by_check_in_date = _aggregate_income_segments(
+        analysis_table,
+        group_columns=["check_in", "unit_id", "currency"],
+    )
+    by_month_unit_currency = _aggregate_income_segments(
+        analysis_table,
+        group_columns=["check_in_year", "check_in_month", "unit_id", "currency"],
+    )
+    by_month_context_currency = _aggregate_income_segments(
+        analysis_table,
+        group_columns=["check_in_month", "check_in_context", "currency"],
+    )
+
+    return {
+        "summary_scope": summary_scope,
+        "by_check_in_date": by_check_in_date,
+        "by_month_unit_currency": by_month_unit_currency,
+        "by_month_context_currency": by_month_context_currency,
+    }
+
+
 def build_income_segment_insights(summary: dict[str, object]) -> dict[str, object]:
     """Derive reproducible narrative insights from the segment summary."""
     insights: list[dict[str, object]] = []

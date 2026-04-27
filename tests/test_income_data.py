@@ -12,6 +12,7 @@ from vitali.data.income import (
     build_income_profile,
     build_income_segment_summary,
     build_income_summary,
+    build_income_visual_summary,
     load_income_data,
     render_income_segment_insights_markdown,
     render_income_segment_summary_markdown,
@@ -212,3 +213,16 @@ def test_render_income_segment_insights_markdown_contains_insight_section(sample
     assert "## Primary Insights" in report
     assert "- [CRC] (" in report or "- [USD] (" in report
     assert "Support:" in report
+
+
+def test_build_income_visual_summary_returns_time_series_segments(sample_income_csv: Path) -> None:
+    dataset = load_income_data(sample_income_csv, IncomeDataConfig())
+    table = build_income_analysis_table(dataset.records)
+
+    summary = build_income_visual_summary(table)
+
+    assert summary["summary_scope"]["currencies"] == ["CRC", "USD"]
+    assert summary["summary_scope"]["units"] == ["room_a", "room_b"]
+    assert all("check_in" in row for row in summary["by_check_in_date"])
+    assert all("check_in_month" in row for row in summary["by_month_unit_currency"])
+    assert all("check_in_context" in row for row in summary["by_month_context_currency"])

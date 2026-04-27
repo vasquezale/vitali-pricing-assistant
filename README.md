@@ -121,6 +121,24 @@ uv run python scripts/generate_income_segment_insights.py \
 These insights are generated from the segment summary itself. They are meant to
 reduce manual reading of raw tables, not to replace deeper business validation.
 
+To generate quick visual diagnostics of how income behaves over time by room:
+
+```bash
+uv run python scripts/plot_income_trends.py \
+  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --output-dir artifacts/income_trends
+```
+
+This produces:
+
+- PNG charts for monthly reservations, gross income, and median ADR by room
+- a month/context ADR chart (`weekday` vs `weekend`)
+- CSV support tables
+- a compact Markdown summary for fast reading
+
+Keep in mind that the charts still respect the current `preserve_original`
+currency policy, so `USD` and `CRC` are shown separately.
+
 ## Safe Publication Flow
 
 ```bash
