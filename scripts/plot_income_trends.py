@@ -206,10 +206,16 @@ def main() -> None:
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    charts_dir = output_dir / "charts"
+    tables_dir = output_dir / "tables"
+    reports_dir = output_dir / "reports"
+    charts_dir.mkdir(parents=True, exist_ok=True)
+    tables_dir.mkdir(parents=True, exist_ok=True)
+    reports_dir.mkdir(parents=True, exist_ok=True)
 
-    monthly_frame.to_csv(output_dir / "monthly_income_trends.csv", index=False)
-    date_frame.to_csv(output_dir / "check_in_date_income_trends.csv", index=False)
-    context_frame.to_csv(output_dir / "monthly_context_trends.csv", index=False)
+    monthly_frame.to_csv(tables_dir / "monthly_income_trends.csv", index=False)
+    date_frame.to_csv(tables_dir / "check_in_date_income_trends.csv", index=False)
+    context_frame.to_csv(tables_dir / "monthly_context_trends.csv", index=False)
 
     _render_chart(
         monthly_frame,
@@ -217,7 +223,7 @@ def main() -> None:
         y_column="reservations",
         title="Monthly Reservations by Room",
         y_label="Reservations",
-        output_path=output_dir / "monthly_reservations_by_room.png",
+        output_path=charts_dir / "monthly_reservations_by_room.png",
     )
     _render_chart(
         monthly_frame,
@@ -225,7 +231,7 @@ def main() -> None:
         y_column="gross_income_sum",
         title="Monthly Gross Income by Room",
         y_label="Gross income",
-        output_path=output_dir / "monthly_gross_income_by_room.png",
+        output_path=charts_dir / "monthly_gross_income_by_room.png",
     )
     _render_chart(
         monthly_frame,
@@ -233,17 +239,17 @@ def main() -> None:
         y_column="median_gross_adr",
         title="Monthly Median ADR by Room",
         y_label="Median gross ADR",
-        output_path=output_dir / "monthly_median_adr_by_room.png",
+        output_path=charts_dir / "monthly_median_adr_by_room.png",
     )
-    _render_context_chart(context_frame, output_dir / "monthly_context_adr.png")
+    _render_context_chart(context_frame, charts_dir / "monthly_context_adr.png")
 
-    summary_output = output_dir / "income_trend_summary.json"
+    summary_output = reports_dir / "income_trend_summary.json"
     summary_output.write_text(
         json.dumps(visual_summary, indent=2, ensure_ascii=True, default=str),
         encoding="utf-8",
     )
 
-    markdown_output = output_dir / "income_trend_summary.md"
+    markdown_output = reports_dir / "income_trend_summary.md"
     markdown_output.write_text(
         _render_markdown_report(dataset.source_path.name, visual_summary, monthly_frame),
         encoding="utf-8",

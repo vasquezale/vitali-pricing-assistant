@@ -131,10 +131,9 @@ uv run python scripts/plot_income_trends.py \
 
 This produces:
 
-- PNG charts for monthly reservations, gross income, and median ADR by room
-- a month/context ADR chart (`weekday` vs `weekend`)
-- CSV support tables
-- a compact Markdown summary for fast reading
+- `charts/`: PNG charts for monthly reservations, gross income, median ADR, and month/context ADR
+- `tables/`: CSV support tables for the plotted series
+- `reports/`: compact Markdown and JSON summaries for fast reading
 
 Keep in mind that the charts still respect the current `preserve_original`
 currency policy, so `USD` and `CRC` are shown separately.
