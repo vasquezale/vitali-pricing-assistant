@@ -9,8 +9,10 @@ from vitali.config import FxNormalizationConfig, IncomeDataConfig
 from vitali.data.income import (
     build_income_analysis_table,
     build_income_profile,
+    build_income_segment_summary,
     build_income_summary,
     load_income_data,
+    render_income_segment_summary_markdown,
     render_income_summary_markdown,
     resolve_fx_rates,
 )
@@ -150,3 +152,31 @@ def test_resolve_fx_rates_rejects_missing_manual_rates() -> None:
 
     with pytest.raises(ValueError, match="no rates_to_crc"):
         resolve_fx_rates(policy)
+
+
+def test_build_income_segment_summary_keeps_currency_as_grouping_axis(sample_income_csv: Path) -> None:
+    dataset = load_income_data(sample_income_csv, IncomeDataConfig())
+    table = build_income_analysis_table(dataset.records)
+
+    summary = build_income_segment_summary(table)
+
+    assert summary["summary_scope"]["currencies"] == ["CRC", "USD"]
+    assert summary["summary_scope"]["fx_normalization_statuses"] == ["original_currency_only"]
+    assert all("currency" in row for row in summary["by_unit_currency"])
+    assert all("currency" in row for row in summary["by_month_currency"])
+    assert all("currency" in row for row in summary["by_context_currency"])
+    assert all("currency" in row for row in summary["by_lead_bucket_currency"])
+
+
+def test_render_income_segment_summary_markdown_contains_safe_sections(sample_income_csv: Path) -> None:
+    dataset = load_income_data(sample_income_csv, IncomeDataConfig())
+    table = build_income_analysis_table(dataset.records)
+    summary = build_income_segment_summary(table)
+
+    report = render_income_segment_summary_markdown(summary, dataset.source_path.name)
+
+    assert "# Income Segment Summary" in report
+    assert "## By Unit and Currency" in report
+    assert "## By Month and Currency" in report
+    assert "## By Weekend/Weekday and Currency" in report
+    assert "## By Lead Bucket and Currency" in report

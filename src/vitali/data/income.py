@@ -279,6 +279,93 @@ def build_income_analysis_table(
     return reservations[selected_columns].sort_values(["check_in", "unit_id"]).reset_index(drop=True)
 
 
+def build_income_segment_summary(analysis_table: pd.DataFrame) -> dict[str, object]:
+    """Aggregate the reservation-level analysis table without mixing currencies."""
+    summary_scope = {
+        "rows": int(len(analysis_table)),
+        "currencies": sorted(analysis_table["currency"].dropna().unique().tolist()),
+        "units": sorted(analysis_table["unit_id"].dropna().unique().tolist()),
+        "fx_normalization_statuses": sorted(analysis_table["fx_normalization_status"].dropna().unique().tolist()),
+        "check_in_min": _to_optional_date(analysis_table["check_in"].min()),
+        "check_in_max": _to_optional_date(analysis_table["check_in"].max()),
+    }
+
+    by_unit_currency = _aggregate_income_segments(
+        analysis_table,
+        group_columns=["unit_id", "currency"],
+    )
+    by_month_currency = _aggregate_income_segments(
+        analysis_table,
+        group_columns=["check_in_year", "check_in_month", "currency"],
+    )
+    by_context_currency = _aggregate_income_segments(
+        analysis_table,
+        group_columns=["check_in_context", "currency"],
+    )
+    by_lead_bucket_currency = _aggregate_income_segments(
+        analysis_table,
+        group_columns=["lead_bucket", "currency"],
+    )
+
+    return {
+        "summary_scope": summary_scope,
+        "by_unit_currency": by_unit_currency,
+        "by_month_currency": by_month_currency,
+        "by_context_currency": by_context_currency,
+        "by_lead_bucket_currency": by_lead_bucket_currency,
+    }
+
+
+def render_income_segment_summary_markdown(summary: dict[str, object], source_name: str) -> str:
+    """Render the segment summary in Markdown format."""
+    scope = summary["summary_scope"]
+    lines = [
+        "# Income Segment Summary",
+        "",
+        "This report aggregates reservation-level income signals while keeping `currency`",
+        "as a required grouping dimension for monetary metrics.",
+        "",
+        "## Scope",
+        f"- Source: `{source_name}`",
+        f"- Rows analyzed: `{scope['rows']}`",
+        f"- Currencies present: `{', '.join(scope['currencies'])}`",
+        f"- Units present: `{', '.join(scope['units'])}`",
+        f"- FX statuses present: `{', '.join(scope['fx_normalization_statuses'])}`",
+        f"- Check-in range: `{scope['check_in_min']}` to `{scope['check_in_max']}`",
+        "",
+    ]
+
+    lines.extend(
+        _render_segment_table(
+            title="By Unit and Currency",
+            rows=summary["by_unit_currency"],
+            columns=["unit_id", "currency", "reservations", "nights", "gross_income_sum", "net_amount_sum", "median_gross_adr", "median_net_adr"],
+        )
+    )
+    lines.extend(
+        _render_segment_table(
+            title="By Month and Currency",
+            rows=summary["by_month_currency"],
+            columns=["check_in_year", "check_in_month", "currency", "reservations", "nights", "gross_income_sum", "net_amount_sum", "median_gross_adr"],
+        )
+    )
+    lines.extend(
+        _render_segment_table(
+            title="By Weekend/Weekday and Currency",
+            rows=summary["by_context_currency"],
+            columns=["check_in_context", "currency", "reservations", "nights", "gross_income_sum", "net_amount_sum", "median_gross_adr"],
+        )
+    )
+    lines.extend(
+        _render_segment_table(
+            title="By Lead Bucket and Currency",
+            rows=summary["by_lead_bucket_currency"],
+            columns=["lead_bucket", "currency", "reservations", "nights", "gross_income_sum", "net_amount_sum", "median_gross_adr"],
+        )
+    )
+    return "\n".join(lines) + "\n"
+
+
 def resolve_fx_rates(config: FxNormalizationConfig) -> dict[str, float] | None:
     """Resolve the configured FX normalization policy into concrete rates or none.
 
@@ -414,3 +501,60 @@ def _bucket_lead_days(value: float) -> str:
     if value <= 30:
         return "15-30"
     return "31+"
+
+
+def _aggregate_income_segments(
+    frame: pd.DataFrame,
+    group_columns: list[str],
+) -> list[dict[str, object]]:
+    grouped = frame.groupby(group_columns, dropna=False)
+    rows: list[dict[str, object]] = []
+    for keys, segment in grouped:
+        if not isinstance(keys, tuple):
+            keys = (keys,)
+        row = dict(zip(group_columns, keys, strict=False))
+        row.update(
+            {
+                "reservations": int(len(segment)),
+                "nights": float(segment["nights"].sum()),
+                "gross_income_sum": float(segment["gross_income"].sum()),
+                "net_amount_sum": float(segment["net_amount"].sum()),
+                "median_gross_adr": _to_optional_float(segment["gross_adr"].median()),
+                "median_net_adr": _to_optional_float(segment["net_adr"].median()),
+                "median_booking_lead_days": _to_optional_float(segment["booking_lead_days"].median()),
+            }
+        )
+        rows.append(row)
+    return rows
+
+
+def _render_segment_table(title: str, rows: list[dict[str, object]], columns: list[str]) -> list[str]:
+    lines = [f"## {title}"]
+    header = "| " + " | ".join(columns) + " |"
+    divider = "|" + "|".join("---:" if _is_numeric_column(column) else "---" for column in columns) + "|"
+    lines.extend([header, divider])
+    for row in rows:
+        rendered = []
+        for column in columns:
+            value = row.get(column)
+            if isinstance(value, float):
+                rendered.append(f"{value:.2f}")
+            else:
+                rendered.append(str(value))
+        lines.append("| " + " | ".join(rendered) + " |")
+    lines.append("")
+    return lines
+
+
+def _is_numeric_column(column: str) -> bool:
+    return column in {
+        "reservations",
+        "nights",
+        "gross_income_sum",
+        "net_amount_sum",
+        "median_gross_adr",
+        "median_net_adr",
+        "median_booking_lead_days",
+        "check_in_year",
+        "check_in_month",
+    }

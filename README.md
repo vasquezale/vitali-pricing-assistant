@@ -95,6 +95,20 @@ under `fx_normalization`. The recommended default for the current phase is:
 Only switch to `manual_static` when you have explicitly chosen and documented
 the rates you want to use for comparison in CRC.
 
+To generate an aggregated summary that keeps `currency` as a mandatory grouping
+axis for monetary metrics:
+
+```bash
+uv run python scripts/summarize_income_segments.py \
+  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --json-output artifacts/income_segment_summary.json \
+  --markdown-output artifacts/income_segment_summary.md
+```
+
+This is the recommended next step under the current official policy
+`preserve_original`, because it allows totals and medians by segment without
+accidentally mixing `USD` and `CRC`.
+
 ## Safe Publication Flow
 
 ```bash
