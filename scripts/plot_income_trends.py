@@ -18,6 +18,11 @@ from vitali.data.income import (
     resolve_fx_rates,
 )
 
+UNIT_LABELS = {
+    "room_a": "CieloRosa",
+    "room_b": "Aqua",
+}
+
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
@@ -41,6 +46,8 @@ def _frame_from_rows(rows: list[dict[str, object]]) -> pd.DataFrame:
     frame = pd.DataFrame(rows)
     if frame.empty:
         return frame
+    if "unit_id" in frame.columns:
+        frame["unit_label"] = frame["unit_id"].map(UNIT_LABELS).fillna(frame["unit_id"])
     if "check_in" in frame.columns:
         frame["check_in"] = pd.to_datetime(frame["check_in"])
     if {"check_in_year", "check_in_month"}.issubset(frame.columns):
@@ -68,7 +75,7 @@ def _render_chart(
     if len(currencies) == 1:
         axes = [axes]
 
-    palette = {"room_a": "#d6725b", "room_b": "#2b8c7e"}
+    palette = {"CieloRosa": "#d6725b", "Aqua": "#2b8c7e"}
 
     for axis, currency in zip(axes, currencies, strict=True):
         currency_frame = frame.loc[frame["currency"] == currency].copy()
@@ -76,7 +83,7 @@ def _render_chart(
             data=currency_frame,
             x=x_column,
             y=y_column,
-            hue="unit_id",
+            hue="unit_label",
             marker="o",
             linewidth=2.2,
             palette=palette,
@@ -86,7 +93,8 @@ def _render_chart(
         axis.set_ylabel(y_label)
         axis.set_xlabel("")
         axis.grid(True, alpha=0.25)
-        axis.legend(title="unit_id")
+        axis.legend(title="Habitacion")
+        axis.tick_params(axis="x", rotation=45)
 
     axes[-1].set_xlabel("Periodo")
     fig.tight_layout()
@@ -130,13 +138,14 @@ def _render_markdown_report(
     monthly_frame: pd.DataFrame,
 ) -> str:
     scope = summary["summary_scope"]
+    unit_labels = [UNIT_LABELS.get(unit_id, unit_id) for unit_id in scope["units"]]
     lines = [
         "# Income Trend Visual Summary",
         "",
         f"- Source: `{source_name}`",
         f"- Rows analyzed: `{scope['rows']}`",
         f"- Currencies present: `{', '.join(scope['currencies'])}`",
-        f"- Units present: `{', '.join(scope['units'])}`",
+        f"- Units present: `{', '.join(unit_labels)}`",
         f"- Check-in range: `{scope['check_in_min']}` to `{scope['check_in_max']}`",
         "",
         "## Quick Reading Guide",
@@ -154,11 +163,12 @@ def _render_markdown_report(
             unit_frame = currency_frame.loc[currency_frame["unit_id"] == unit_id]
             if unit_frame.empty:
                 continue
+            unit_label = UNIT_LABELS.get(unit_id, unit_id)
             top_res = unit_frame.sort_values("reservations", ascending=False).iloc[0]
             top_income = unit_frame.sort_values("gross_income_sum", ascending=False).iloc[0]
             top_adr = unit_frame.sort_values("median_gross_adr", ascending=False).iloc[0]
             lines.append(
-                f"- `{currency}` / `{unit_id}`: max reservations in `{top_res['month_label']}` "
+                f"- `{currency}` / `{unit_label}`: max reservations in `{top_res['month_label']}` "
                 f"({int(top_res['reservations'])}), max gross income in `{top_income['month_label']}` "
                 f"({top_income['gross_income_sum']:.2f}), max median ADR in `{top_adr['month_label']}` "
                 f"({top_adr['median_gross_adr']:.2f})."
