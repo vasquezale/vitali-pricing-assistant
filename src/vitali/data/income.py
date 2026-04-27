@@ -316,6 +316,54 @@ def build_income_segment_summary(analysis_table: pd.DataFrame) -> dict[str, obje
     }
 
 
+def build_income_segment_insights(summary: dict[str, object]) -> dict[str, object]:
+    """Derive reproducible narrative insights from the segment summary."""
+    insights: list[dict[str, object]] = []
+
+    by_unit_currency = summary["by_unit_currency"]
+    insights.extend(_build_unit_performance_insights(by_unit_currency))
+
+    by_context_currency = summary["by_context_currency"]
+    insights.extend(_build_weekend_weekday_insights(by_context_currency))
+
+    by_lead_bucket_currency = summary["by_lead_bucket_currency"]
+    insights.extend(_build_lead_bucket_insights(by_lead_bucket_currency))
+
+    by_month_currency = summary["by_month_currency"]
+    insights.extend(_build_month_peak_insights(by_month_currency))
+
+    return {
+        "summary_scope": summary["summary_scope"],
+        "insight_count": len(insights),
+        "insights": insights,
+    }
+
+
+def render_income_segment_insights_markdown(insights_payload: dict[str, object], source_name: str) -> str:
+    """Render segment insights as a concise Markdown report."""
+    scope = insights_payload["summary_scope"]
+    lines = [
+        "# Income Segment Insights",
+        "",
+        "These insights are derived mechanically from the segment summary and keep",
+        "`currency` as a mandatory dimension for every monetary comparison.",
+        "",
+        "## Scope",
+        f"- Source: `{source_name}`",
+        f"- Rows analyzed: `{scope['rows']}`",
+        f"- Currencies present: `{', '.join(scope['currencies'])}`",
+        f"- Units present: `{', '.join(scope['units'])}`",
+        f"- FX statuses present: `{', '.join(scope['fx_normalization_statuses'])}`",
+        f"- Insight count: `{insights_payload['insight_count']}`",
+        "",
+        "## Insights",
+    ]
+    for insight in insights_payload["insights"]:
+        lines.append(f"- [{insight['currency']}] {insight['message']}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def render_income_segment_summary_markdown(summary: dict[str, object], source_name: str) -> str:
     """Render the segment summary in Markdown format."""
     scope = summary["summary_scope"]
@@ -558,3 +606,122 @@ def _is_numeric_column(column: str) -> bool:
         "check_in_year",
         "check_in_month",
     }
+
+
+def _build_unit_performance_insights(rows: list[dict[str, object]]) -> list[dict[str, object]]:
+    insights: list[dict[str, object]] = []
+    by_currency: dict[str, list[dict[str, object]]] = {}
+    for row in rows:
+        by_currency.setdefault(row["currency"], []).append(row)
+
+    for currency, currency_rows in by_currency.items():
+        if len(currency_rows) < 2:
+            continue
+        ranked = sorted(currency_rows, key=lambda item: item["median_gross_adr"], reverse=True)
+        top = ranked[0]
+        bottom = ranked[-1]
+        diff = top["median_gross_adr"] - bottom["median_gross_adr"]
+        insights.append(
+            {
+                "kind": "unit_adr_gap",
+                "currency": currency,
+                "message": (
+                    f"{top['unit_id']} shows the highest median gross ADR at {top['median_gross_adr']:.2f}, "
+                    f"above {bottom['unit_id']} by {diff:.2f}."
+                ),
+                "evidence": {
+                    "top_unit": top["unit_id"],
+                    "top_median_gross_adr": top["median_gross_adr"],
+                    "bottom_unit": bottom["unit_id"],
+                    "bottom_median_gross_adr": bottom["median_gross_adr"],
+                },
+            }
+        )
+    return insights
+
+
+def _build_weekend_weekday_insights(rows: list[dict[str, object]]) -> list[dict[str, object]]:
+    insights: list[dict[str, object]] = []
+    by_currency_context = {(row["currency"], row["check_in_context"]): row for row in rows}
+    currencies = sorted({row["currency"] for row in rows})
+    for currency in currencies:
+        weekday = by_currency_context.get((currency, "weekday"))
+        weekend = by_currency_context.get((currency, "weekend"))
+        if not weekday or not weekend:
+            continue
+        diff = weekend["median_gross_adr"] - weekday["median_gross_adr"]
+        direction = "higher" if diff >= 0 else "lower"
+        insights.append(
+            {
+                "kind": "weekend_weekday_gap",
+                "currency": currency,
+                "message": (
+                    f"Weekend check-ins show {direction} median gross ADR than weekday check-ins by "
+                    f"{abs(diff):.2f}."
+                ),
+                "evidence": {
+                    "weekend_median_gross_adr": weekend["median_gross_adr"],
+                    "weekday_median_gross_adr": weekday["median_gross_adr"],
+                },
+            }
+        )
+    return insights
+
+
+def _build_lead_bucket_insights(rows: list[dict[str, object]]) -> list[dict[str, object]]:
+    insights: list[dict[str, object]] = []
+    by_currency: dict[str, list[dict[str, object]]] = {}
+    for row in rows:
+        by_currency.setdefault(row["currency"], []).append(row)
+
+    order = {"0-3": 0, "4-7": 1, "8-14": 2, "15-30": 3, "31+": 4, "unknown": 5}
+    for currency, currency_rows in by_currency.items():
+        ranked = sorted(currency_rows, key=lambda item: item["median_gross_adr"], reverse=True)
+        top = ranked[0]
+        earliest = min(currency_rows, key=lambda item: order.get(item["lead_bucket"], 99))
+        if top["lead_bucket"] == earliest["lead_bucket"]:
+            continue
+        insights.append(
+            {
+                "kind": "lead_bucket_peak",
+                "currency": currency,
+                "message": (
+                    f"The highest median gross ADR appears in lead bucket {top['lead_bucket']} at "
+                    f"{top['median_gross_adr']:.2f}, versus {earliest['lead_bucket']} at "
+                    f"{earliest['median_gross_adr']:.2f}."
+                ),
+                "evidence": {
+                    "top_lead_bucket": top["lead_bucket"],
+                    "top_median_gross_adr": top["median_gross_adr"],
+                    "earliest_lead_bucket": earliest["lead_bucket"],
+                    "earliest_median_gross_adr": earliest["median_gross_adr"],
+                },
+            }
+        )
+    return insights
+
+
+def _build_month_peak_insights(rows: list[dict[str, object]]) -> list[dict[str, object]]:
+    insights: list[dict[str, object]] = []
+    by_currency: dict[str, list[dict[str, object]]] = {}
+    for row in rows:
+        by_currency.setdefault(row["currency"], []).append(row)
+
+    for currency, currency_rows in by_currency.items():
+        top = max(currency_rows, key=lambda item: item["median_gross_adr"])
+        insights.append(
+            {
+                "kind": "monthly_peak",
+                "currency": currency,
+                "message": (
+                    f"The monthly peak median gross ADR appears in {int(top['check_in_year'])}-"
+                    f"{int(top['check_in_month']):02d} at {top['median_gross_adr']:.2f}."
+                ),
+                "evidence": {
+                    "check_in_year": top["check_in_year"],
+                    "check_in_month": top["check_in_month"],
+                    "median_gross_adr": top["median_gross_adr"],
+                },
+            }
+        )
+    return insights

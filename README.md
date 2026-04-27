@@ -109,6 +109,18 @@ This is the recommended next step under the current official policy
 `preserve_original`, because it allows totals and medians by segment without
 accidentally mixing `USD` and `CRC`.
 
+To derive reproducible narrative insights from those segments:
+
+```bash
+uv run python scripts/generate_income_segment_insights.py \
+  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --json-output artifacts/income_segment_insights.json \
+  --markdown-output artifacts/income_segment_insights.md
+```
+
+These insights are generated from the segment summary itself. They are meant to
+reduce manual reading of raw tables, not to replace deeper business validation.
+
 ## Safe Publication Flow
 
 ```bash

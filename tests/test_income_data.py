@@ -8,10 +8,12 @@ import pytest
 from vitali.config import FxNormalizationConfig, IncomeDataConfig
 from vitali.data.income import (
     build_income_analysis_table,
+    build_income_segment_insights,
     build_income_profile,
     build_income_segment_summary,
     build_income_summary,
     load_income_data,
+    render_income_segment_insights_markdown,
     render_income_segment_summary_markdown,
     render_income_summary_markdown,
     resolve_fx_rates,
@@ -180,3 +182,29 @@ def test_render_income_segment_summary_markdown_contains_safe_sections(sample_in
     assert "## By Month and Currency" in report
     assert "## By Weekend/Weekday and Currency" in report
     assert "## By Lead Bucket and Currency" in report
+
+
+def test_build_income_segment_insights_returns_currency_scoped_findings(sample_income_csv: Path) -> None:
+    dataset = load_income_data(sample_income_csv, IncomeDataConfig())
+    table = build_income_analysis_table(dataset.records)
+    summary = build_income_segment_summary(table)
+
+    insights = build_income_segment_insights(summary)
+
+    assert insights["summary_scope"]["currencies"] == ["CRC", "USD"]
+    assert insights["insight_count"] >= 2
+    assert all("currency" in item for item in insights["insights"])
+    assert all("message" in item for item in insights["insights"])
+
+
+def test_render_income_segment_insights_markdown_contains_insight_section(sample_income_csv: Path) -> None:
+    dataset = load_income_data(sample_income_csv, IncomeDataConfig())
+    table = build_income_analysis_table(dataset.records)
+    summary = build_income_segment_summary(table)
+    insights = build_income_segment_insights(summary)
+
+    report = render_income_segment_insights_markdown(insights, dataset.source_path.name)
+
+    assert "# Income Segment Insights" in report
+    assert "## Insights" in report
+    assert "- [CRC]" in report or "- [USD]" in report
