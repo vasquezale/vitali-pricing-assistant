@@ -1,0 +1,159 @@
+{
+  "source_rows": 421,
+  "source_files": [
+    "FINCA VITALI _ Contabilidad Administrativa _ 2025.xlsx",
+    "FINCA VITALI _ Contabilidad Administrativa _ 2026.xlsx"
+  ],
+  "date_range": {
+    "expense_date_min": "2025-01-02",
+    "expense_date_max": "2026-03-31"
+  },
+  "by_source_file": [
+    {
+      "source_file": "FINCA VITALI _ Contabilidad Administrativa _ 2025.xlsx",
+      "rows": 327,
+      "amount_crc_sum": 35005528.44,
+      "sheet_count": 12
+    },
+    {
+      "source_file": "FINCA VITALI _ Contabilidad Administrativa _ 2026.xlsx",
+      "rows": 94,
+      "amount_crc_sum": 10289714.0,
+      "sheet_count": 3
+    }
+  ],
+  "by_month": [
+    {
+      "expense_year": 2025,
+      "expense_month": 1,
+      "rows": 19,
+      "amount_crc_sum": 2039636.0
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 2,
+      "rows": 17,
+      "amount_crc_sum": 2540194.0
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 3,
+      "rows": 17,
+      "amount_crc_sum": 1491858.0
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 4,
+      "rows": 19,
+      "amount_crc_sum": 1582972.0
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 5,
+      "rows": 15,
+      "amount_crc_sum": 857136.0
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 6,
+      "rows": 13,
+      "amount_crc_sum": 1026316.0
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 7,
+      "rows": 18,
+      "amount_crc_sum": 2076680.0
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 8,
+      "rows": 17,
+      "amount_crc_sum": 1440519.42
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 9,
+      "rows": 33,
+      "amount_crc_sum": 5478079.02
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 10,
+      "rows": 65,
+      "amount_crc_sum": 6519802.0
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 11,
+      "rows": 53,
+      "amount_crc_sum": 3747074.0
+    },
+    {
+      "expense_year": 2025,
+      "expense_month": 12,
+      "rows": 41,
+      "amount_crc_sum": 6205262.0
+    },
+    {
+      "expense_year": 2026,
+      "expense_month": 1,
+      "rows": 28,
+      "amount_crc_sum": 1985908.0
+    },
+    {
+      "expense_year": 2026,
+      "expense_month": 2,
+      "rows": 32,
+      "amount_crc_sum": 6180564.0
+    },
+    {
+      "expense_year": 2026,
+      "expense_month": 3,
+      "rows": 34,
+      "amount_crc_sum": 2123242.0
+    }
+  ],
+  "top_descriptions": [
+    {
+      "description": "Alimentaci\u00f3n",
+      "rows": 13
+    },
+    {
+      "description": "SUPERMERCADO",
+      "rows": 11
+    },
+    {
+      "description": "Pricesmart",
+      "rows": 10
+    },
+    {
+      "description": "AMPM",
+      "rows": 10
+    },
+    {
+      "description": "Supermercado",
+      "rows": 10
+    },
+    {
+      "description": "ADOBE",
+      "rows": 9
+    },
+    {
+      "description": "SINPE IVANIA | LIMPIEZA",
+      "rows": 7
+    },
+    {
+      "description": "SINPE Pago Yami",
+      "rows": 6
+    },
+    {
+      "description": "Starlink / Internet",
+      "rows": 6
+    },
+    {
+      "description": "Luz / JASEC pozo",
+      "rows": 6
+    }
+  ]
+}

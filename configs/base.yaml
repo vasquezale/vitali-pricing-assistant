@@ -48,6 +48,29 @@ income_data:
     - "USD"
     - "CRC"
 
+expense_data:
+  source_files:
+    - "data/raw/financials/FINCA VITALI _ Contabilidad Administrativa _ 2025.xlsx"
+    - "data/raw/financials/FINCA VITALI _ Contabilidad Administrativa _ 2026.xlsx"
+  expected_sheet_names_by_file:
+    "FINCA VITALI _ Contabilidad Administrativa _ 2025.xlsx":
+      - "ENERO"
+      - "FEBRERO"
+      - "MARZO"
+      - "ABRIL"
+      - "MAYO"
+      - "JUNIO"
+      - "JULIO"
+      - "AGOSTO"
+      - "SEPTIEMBRE"
+      - "OCTUBRE"
+      - "NOVIEMBRE"
+      - "DICIEMBRE"
+    "FINCA VITALI _ Contabilidad Administrativa _ 2026.xlsx":
+      - "ENERO"
+      - "FEBRERO"
+      - "MARZO"
+
 fx_normalization:
   enabled: false
   strategy: "preserve_original"

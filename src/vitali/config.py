@@ -58,6 +58,37 @@ class IncomeDataConfig:
 
 
 @dataclass
+class ExpenseDataConfig:
+    """Expense workbook settings for reproducible financial ingestion."""
+
+    source_files: list[str] = field(
+        default_factory=lambda: [
+            "data/raw/financials/FINCA VITALI _ Contabilidad Administrativa _ 2025.xlsx",
+            "data/raw/financials/FINCA VITALI _ Contabilidad Administrativa _ 2026.xlsx",
+        ]
+    )
+    expected_sheet_names_by_file: dict[str, list[str]] = field(
+        default_factory=lambda: {
+            "FINCA VITALI _ Contabilidad Administrativa _ 2025.xlsx": [
+                "ENERO",
+                "FEBRERO",
+                "MARZO",
+                "ABRIL",
+                "MAYO",
+                "JUNIO",
+                "JULIO",
+                "AGOSTO",
+                "SEPTIEMBRE",
+                "OCTUBRE",
+                "NOVIEMBRE",
+                "DICIEMBRE",
+            ],
+            "FINCA VITALI _ Contabilidad Administrativa _ 2026.xlsx": ["ENERO", "FEBRERO", "MARZO"],
+        }
+    )
+
+
+@dataclass
 class FxNormalizationConfig:
     """Explicit foreign-exchange normalization policy for income analysis."""
 
@@ -77,6 +108,7 @@ class Config:
     paths: PathsConfig = field(default_factory=PathsConfig)
     modeling: ModelingConfig = field(default_factory=ModelingConfig)
     income_data: IncomeDataConfig = field(default_factory=IncomeDataConfig)
+    expense_data: ExpenseDataConfig = field(default_factory=ExpenseDataConfig)
     fx_normalization: FxNormalizationConfig = field(default_factory=FxNormalizationConfig)
 
     @classmethod
@@ -88,6 +120,7 @@ class Config:
         paths = PathsConfig(**raw.get("paths", {}))
         modeling = ModelingConfig(**raw.get("modeling", {}))
         income_data = IncomeDataConfig(**raw.get("income_data", {}))
+        expense_data = ExpenseDataConfig(**raw.get("expense_data", {}))
         fx_normalization = FxNormalizationConfig(**raw.get("fx_normalization", {}))
         project = raw.get("project", {})
 
@@ -98,5 +131,6 @@ class Config:
             paths=paths,
             modeling=modeling,
             income_data=income_data,
+            expense_data=expense_data,
             fx_normalization=fx_normalization,
         )

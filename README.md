@@ -6,7 +6,9 @@
 
 ## Status
 
-Early development. Project scaffolding is in place, Phase 1 is still being closed, and Phase 2 remains blocked until Airbnb raw data is available locally under `data/raw/`.
+Project scaffolding is in place, Phase 1 is closed with explicit reservations, and
+Phase 2 remains blocked until the existing business source files are copied into a
+controlled local `data/raw/` layout and prepared for inspection.
 
 ## Repo vs Vault
 
@@ -25,6 +27,26 @@ Project context, research, agent coordination, prompts, and living documentation
 - Real Airbnb exports, guest data, sanitized datasets, and intermediate datasets must stay under `data/` and are never committed.
 - Secrets, local credentials, and personal tooling files must stay in ignored locations such as `.env`, `secrets/`, or repo-local excludes.
 - If a file should help other collaborators without exposing secrets, commit a safe template such as `.env.example` instead of the real file.
+
+## What `data/raw/` Means Here
+
+`data/raw/` does **not** mean “more private data must exist somewhere else”.
+It means the real source files you already have should be copied into a stable,
+ignored, repo-local structure so scripts can reference them reproducibly.
+
+Recommended local layout:
+
+```text
+data/
+  raw/
+    financials/
+      FINCA VITALI _ Contabilidad Administrativa _ 2025.xlsx
+      FINCA VITALI _ Contabilidad Administrativa _ 2026.xlsx
+    airbnb/
+      DatosVitali_ingresos_anonimizados.csv
+```
+
+The files stay local and gitignored. The value is reproducibility, not publication.
 
 ## Quick Start
 
@@ -137,6 +159,26 @@ This produces:
 
 Keep in mind that the charts still respect the current `preserve_original`
 currency policy, so `USD` and `CRC` are shown separately.
+
+## Reproducible Expense Analysis Base
+
+The repo now also includes a minimal reproducible path for the accounting
+workbooks used as the expense source of truth.
+
+1. Copy the real workbooks into `data/raw/financials/`, or pass explicit paths
+   with repeated `--input` flags.
+2. Generate a compact profile:
+
+```bash
+uv run python scripts/profile_expense_data.py \
+  --input "/absolute/path/to/FINCA VITALI _ Contabilidad Administrativa _ 2025.xlsx" \
+  --input "/absolute/path/to/FINCA VITALI _ Contabilidad Administrativa _ 2026.xlsx" \
+  --output artifacts/expense_profile.json
+```
+
+This step does **not** solve cost allocation or net profitability. It only gives
+the project a reproducible expense intake layer so Fase 2 does not start from
+Markdown summaries alone.
 
 ## Safe Publication Flow
 
