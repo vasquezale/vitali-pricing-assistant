@@ -338,10 +338,17 @@ def build_income_segment_insights(summary: dict[str, object]) -> dict[str, objec
         insight["confidence_score"] = confidence["score"]
         insight["confidence_reason"] = confidence["reason"]
 
+    primary_insights = [item for item in insights if item["confidence_label"] in {"high", "medium"}]
+    appendix_insights = [item for item in insights if item["confidence_label"] == "low"]
+
     return {
         "summary_scope": summary["summary_scope"],
         "insight_count": len(insights),
+        "primary_insight_count": len(primary_insights),
+        "appendix_insight_count": len(appendix_insights),
         "insights": insights,
+        "primary_insights": primary_insights,
+        "appendix_insights": appendix_insights,
     }
 
 
@@ -361,14 +368,24 @@ def render_income_segment_insights_markdown(insights_payload: dict[str, object],
         f"- Units present: `{', '.join(scope['units'])}`",
         f"- FX statuses present: `{', '.join(scope['fx_normalization_statuses'])}`",
         f"- Insight count: `{insights_payload['insight_count']}`",
+        f"- Primary insight count: `{insights_payload['primary_insight_count']}`",
+        f"- Appendix insight count: `{insights_payload['appendix_insight_count']}`",
         "",
-        "## Insights",
+        "## Primary Insights",
     ]
-    for insight in insights_payload["insights"]:
+    for insight in insights_payload["primary_insights"]:
         lines.append(
             f"- [{insight['currency']}] ({insight['confidence_label']}) {insight['message']} "
             f"Support: {insight['confidence_reason']}."
         )
+
+    if insights_payload["appendix_insights"]:
+        lines.extend(["", "## Appendix: Low-Confidence Insights"])
+        for insight in insights_payload["appendix_insights"]:
+            lines.append(
+                f"- [{insight['currency']}] ({insight['confidence_label']}) {insight['message']} "
+                f"Support: {insight['confidence_reason']}."
+            )
     lines.append("")
     return "\n".join(lines)
 

@@ -16,6 +16,8 @@
     "check_in_max": "2026-01-30"
   },
   "insight_count": 8,
+  "primary_insight_count": 7,
+  "appendix_insight_count": 1,
   "insights": [
     {
       "kind": "unit_adr_gap",
@@ -136,6 +138,130 @@
       "confidence_label": "medium",
       "confidence_score": 0.6,
       "confidence_reason": "peak month segment contains 20 reservations"
+    }
+  ],
+  "primary_insights": [
+    {
+      "kind": "unit_adr_gap",
+      "currency": "CRC",
+      "message": "room_b shows the highest median gross ADR at 77000.00, above room_a by 8000.00.",
+      "evidence": {
+        "top_unit": "room_b",
+        "top_median_gross_adr": 77000.0,
+        "bottom_unit": "room_a",
+        "bottom_median_gross_adr": 69000.0,
+        "top_reservations": 116,
+        "bottom_reservations": 109
+      },
+      "confidence_label": "high",
+      "confidence_score": 0.9,
+      "confidence_reason": "minimum segment support is 109 reservations across the compared units"
+    },
+    {
+      "kind": "unit_adr_gap",
+      "currency": "USD",
+      "message": "room_b shows the highest median gross ADR at 200.00, above room_a by 35.00.",
+      "evidence": {
+        "top_unit": "room_b",
+        "top_median_gross_adr": 200.0,
+        "bottom_unit": "room_a",
+        "bottom_median_gross_adr": 165.0,
+        "top_reservations": 37,
+        "bottom_reservations": 34
+      },
+      "confidence_label": "high",
+      "confidence_score": 0.9,
+      "confidence_reason": "minimum segment support is 34 reservations across the compared units"
+    },
+    {
+      "kind": "weekend_weekday_gap",
+      "currency": "CRC",
+      "message": "Weekend check-ins show higher median gross ADR than weekday check-ins by 17000.00.",
+      "evidence": {
+        "weekend_median_gross_adr": 77000.0,
+        "weekday_median_gross_adr": 60000.0,
+        "weekend_reservations": 174,
+        "weekday_reservations": 51
+      },
+      "confidence_label": "high",
+      "confidence_score": 0.9,
+      "confidence_reason": "minimum context support is 51 reservations across weekend vs weekday"
+    },
+    {
+      "kind": "weekend_weekday_gap",
+      "currency": "USD",
+      "message": "Weekend check-ins show higher median gross ADR than weekday check-ins by 30.00.",
+      "evidence": {
+        "weekend_median_gross_adr": 180.0,
+        "weekday_median_gross_adr": 150.0,
+        "weekend_reservations": 51,
+        "weekday_reservations": 20
+      },
+      "confidence_label": "medium",
+      "confidence_score": 0.6,
+      "confidence_reason": "minimum context support is 20 reservations across weekend vs weekday"
+    },
+    {
+      "kind": "lead_bucket_peak",
+      "currency": "CRC",
+      "message": "The highest median gross ADR appears in lead bucket 31+ at 77000.00, versus 0-3 at 73500.00.",
+      "evidence": {
+        "top_lead_bucket": "31+",
+        "top_median_gross_adr": 77000.0,
+        "top_reservations": 37,
+        "earliest_lead_bucket": "0-3",
+        "earliest_median_gross_adr": 73500.0,
+        "earliest_reservations": 34
+      },
+      "confidence_label": "high",
+      "confidence_score": 0.9,
+      "confidence_reason": "minimum bucket support is 34 reservations across the compared lead buckets"
+    },
+    {
+      "kind": "monthly_peak",
+      "currency": "CRC",
+      "message": "The monthly peak median gross ADR appears in 2025-04 at 100000.00.",
+      "evidence": {
+        "check_in_year": 2025,
+        "check_in_month": 4,
+        "median_gross_adr": 100000.0,
+        "reservations": 20
+      },
+      "confidence_label": "medium",
+      "confidence_score": 0.6,
+      "confidence_reason": "peak month segment contains 20 reservations"
+    },
+    {
+      "kind": "monthly_peak",
+      "currency": "USD",
+      "message": "The monthly peak median gross ADR appears in 2025-12 at 207.50.",
+      "evidence": {
+        "check_in_year": 2025,
+        "check_in_month": 12,
+        "median_gross_adr": 207.5,
+        "reservations": 20
+      },
+      "confidence_label": "medium",
+      "confidence_score": 0.6,
+      "confidence_reason": "peak month segment contains 20 reservations"
+    }
+  ],
+  "appendix_insights": [
+    {
+      "kind": "lead_bucket_peak",
+      "currency": "USD",
+      "message": "The highest median gross ADR appears in lead bucket 31+ at 210.00, versus 0-3 at 162.50.",
+      "evidence": {
+        "top_lead_bucket": "31+",
+        "top_median_gross_adr": 210.0,
+        "top_reservations": 3,
+        "earliest_lead_bucket": "0-3",
+        "earliest_median_gross_adr": 162.5,
+        "earliest_reservations": 21
+      },
+      "confidence_label": "low",
+      "confidence_score": 0.3,
+      "confidence_reason": "minimum bucket support is 3 reservations across the compared lead buckets"
     }
   ]
 }
