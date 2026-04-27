@@ -444,28 +444,62 @@ def render_income_segment_summary_markdown(summary: dict[str, object], source_na
         _render_segment_table(
             title="By Unit and Currency",
             rows=summary["by_unit_currency"],
-            columns=["unit_id", "currency", "reservations", "nights", "gross_income_sum", "net_amount_sum", "median_gross_adr", "median_net_adr"],
+            columns=[
+                "unit_id",
+                "currency",
+                "reservations",
+                "nights",
+                "gross_income_sum",
+                "net_amount_sum",
+                "median_gross_adr",
+                "median_net_adr",
+            ],
         )
     )
     lines.extend(
         _render_segment_table(
             title="By Month and Currency",
             rows=summary["by_month_currency"],
-            columns=["check_in_year", "check_in_month", "currency", "reservations", "nights", "gross_income_sum", "net_amount_sum", "median_gross_adr"],
+            columns=[
+                "check_in_year",
+                "check_in_month",
+                "currency",
+                "reservations",
+                "nights",
+                "gross_income_sum",
+                "net_amount_sum",
+                "median_gross_adr",
+            ],
         )
     )
     lines.extend(
         _render_segment_table(
             title="By Weekend/Weekday and Currency",
             rows=summary["by_context_currency"],
-            columns=["check_in_context", "currency", "reservations", "nights", "gross_income_sum", "net_amount_sum", "median_gross_adr"],
+            columns=[
+                "check_in_context",
+                "currency",
+                "reservations",
+                "nights",
+                "gross_income_sum",
+                "net_amount_sum",
+                "median_gross_adr",
+            ],
         )
     )
     lines.extend(
         _render_segment_table(
             title="By Lead Bucket and Currency",
             rows=summary["by_lead_bucket_currency"],
-            columns=["lead_bucket", "currency", "reservations", "nights", "gross_income_sum", "net_amount_sum", "median_gross_adr"],
+            columns=[
+                "lead_bucket",
+                "currency",
+                "reservations",
+                "nights",
+                "gross_income_sum",
+                "net_amount_sum",
+                "median_gross_adr",
+            ],
         )
     )
     return "\n".join(lines) + "\n"
@@ -574,7 +608,10 @@ def render_income_summary_markdown(summary: dict[str, object], source_name: str)
         "Saturday": 5,
         "Sunday": 6,
     }
-    for row in sorted(summary["by_weekday_name"], key=lambda item: (item["currency"], weekday_order[item["check_in_weekday"]])):
+    for row in sorted(
+        summary["by_weekday_name"],
+        key=lambda item: (item["currency"], weekday_order[item["check_in_weekday"]]),
+    ):
         lines.append(
             "| {currency} | {check_in_weekday} | {reservations} | {median_gross_adr:.2f} |".format(**row)
         )

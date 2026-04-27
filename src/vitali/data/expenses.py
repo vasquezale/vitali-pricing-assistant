@@ -10,7 +10,6 @@ from openpyxl import load_workbook
 
 from vitali.config import ExpenseDataConfig
 
-
 MONTH_TO_NUMBER = {
     "ENERO": 1,
     "FEBRERO": 2,

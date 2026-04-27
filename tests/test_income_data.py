@@ -8,8 +8,8 @@ import pytest
 from vitali.config import FxNormalizationConfig, IncomeDataConfig
 from vitali.data.income import (
     build_income_analysis_table,
-    build_income_segment_insights,
     build_income_profile,
+    build_income_segment_insights,
     build_income_segment_summary,
     build_income_summary,
     build_income_visual_summary,

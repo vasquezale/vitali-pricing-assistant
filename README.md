@@ -60,6 +60,37 @@ uv sync --extra dev
 uv run bash scripts/run_quality_checks.sh
 ```
 
+## Phase 2 — monthly data pipeline (Yellow gate)
+
+Under the **methodological Yellow gate** (see vault `evidence/phase-2-gate-decision` and `research/02_data_viability`), the repo ships a **minimal reproducible pipeline**:
+
+- `vitali.data.loaders` — expenses from `data/raw/{year}/expenses_{year}_raw.xlsx` (full intake) and income from `artifacts/income_analysis_table_fx.csv` (CRC columns, optional year filter).
+- `vitali.data.validators` — `DataQualityReport` with blocking errors vs advisory alerts (e.g. months with very few bookings).
+- `vitali.data.pipeline` — `reconcile_monthly` joins **monthly** gross income CRC (by `check_in` month) with **monthly** expense CRC (by `fecha` month). This is an **indicative** cash view, not audited P&L or per-reservation profitability.
+
+```mermaid
+flowchart LR
+  subgraph sources [Sources]
+    XLSX["data/raw/.../expenses_*_raw.xlsx"]
+    FX["artifacts/income_analysis_table_fx.csv"]
+  end
+  subgraph pipeline [Python]
+    L[loaders]
+    V[validators]
+    R[reconcile_monthly]
+  end
+  XLSX --> L
+  FX --> L
+  L --> V
+  V --> R
+```
+
+Run focused tests (with coverage on the pipeline modules only):
+
+```bash
+uv run pytest tests/data/ -q --cov=vitali.data --cov-fail-under=80
+```
+
 ## Reproducible Income Analysis Base
 
 The project now includes a minimal reproducible path for the anonymized income extract.
