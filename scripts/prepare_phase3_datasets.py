@@ -35,7 +35,7 @@ def main() -> int:
 
     out_paths = write_phase3_outputs(prepared_income, expenses, root=root)
     print("Outputs:")
-    for k, p in out_paths.items():
+    for k, p in sorted(out_paths.items()):
         print(f"- {k}: {p}")
 
     # Monthly view (indicative)

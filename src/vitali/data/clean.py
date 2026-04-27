@@ -135,5 +135,10 @@ def write_phase3_outputs(
     expenses.to_parquet(p3, index=False)
     paths["expenses_all_years_interim"] = p3
 
+    # Same reservation frame as sanitized: Phase 5 baseline reads from interim lane.
+    p4 = interim / "income_reservations_fx_crc_interim.parquet"
+    prepared.reservations_fx_crc.to_parquet(p4, index=False)
+    paths["income_reservations_fx_crc_interim"] = p4
+
     return paths
 

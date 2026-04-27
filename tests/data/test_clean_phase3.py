@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from vitali.data.clean import prepare_expenses, prepare_income_from_raw_airbnb
+from vitali.data.clean import prepare_expenses, prepare_income_from_raw_airbnb, write_phase3_outputs
 from vitali.data.loaders import income_fx_csv_path
 
 
@@ -47,6 +47,20 @@ def test_prepare_income_preserves_currency_and_uses_crc_columns(repo_root: Path)
     dup_merge = [c for c in df.columns if c.endswith("_x") or c.endswith("_y")]
     assert not dup_merge, f"unexpected merge suffix columns: {dup_merge}"
     assert "booking_lead_days" in df.columns
+
+
+def test_write_phase3_outputs_includes_interim_reservations(repo_root: Path) -> None:
+    raw_path = repo_root / "data" / "raw" / "airbnb" / "Ingresos_Vitali_ingresos_anonimizados.csv"
+    fx_path = repo_root / "artifacts" / "income_analysis_table_fx.csv"
+    if not raw_path.is_file() or not fx_path.is_file():
+        pytest.skip("raw airbnb income or fx table not present")
+
+    prepared = prepare_income_from_raw_airbnb(repo_root)
+    expenses = prepare_expenses(repo_root, years=(2025,))
+    paths = write_phase3_outputs(prepared, expenses, root=repo_root)
+    interim_res = paths.get("income_reservations_fx_crc_interim")
+    assert interim_res is not None
+    assert interim_res.is_file()
 
 
 def test_prepare_expenses_adds_bucket(repo_root: Path) -> None:

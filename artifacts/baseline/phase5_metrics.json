@@ -1,0 +1,91 @@
+{
+  "input": "/Users/ale/Documents/GitHub_Repositorios/proyecto-vitali/data/interim/income_reservations_fx_crc_interim.parquet",
+  "n_train": 242,
+  "n_val": 54,
+  "use_lead_multipliers": false,
+  "by_currency": [
+    {
+      "currency": "CRC",
+      "n_val": 40,
+      "mae_baseline": 6625.0,
+      "mape_pct_baseline": 10.014294367172157,
+      "mae_naive_median": 8175.0
+    },
+    {
+      "currency": "USD",
+      "n_val": 14,
+      "mae_baseline": 14.875,
+      "mape_pct_baseline": 7.539324855673686,
+      "mae_naive_median": 30.678571428571427
+    }
+  ],
+  "rules_doc": "L1 median ADR by (currency, unit_id, check_in_month, is_weekend); fallback L2 (currency, unit_id, is_weekend); L3 (currency, unit_id); L4 (currency). Features: S\u00ed ex-ante per research/03. EDA refs: research/04 \u00a76 findings 1\u20133 (unit, weekend).",
+  "sklearn_benchmarks": [
+    {
+      "currency": "CRC",
+      "name": "linear_regression",
+      "mae": 6883.467984992351,
+      "mape_pct": 10.681630796085875,
+      "r2": 0.22173232719080482
+    },
+    {
+      "currency": "CRC",
+      "name": "decision_tree_depth4",
+      "mae": 7964.597826086957,
+      "mape_pct": 12.131082111255296,
+      "r2": -0.04281789280148818
+    },
+    {
+      "currency": "USD",
+      "name": "linear_regression",
+      "mae": 192.15204873159382,
+      "mape_pct": 109.79069092239797,
+      "r2": -29.232779572637657
+    },
+    {
+      "currency": "USD",
+      "name": "decision_tree_depth4",
+      "mae": 28.02380952380952,
+      "mape_pct": 13.868184711064208,
+      "r2": 0.0967692974561557
+    }
+  ],
+  "complexity_decision": [
+    {
+      "currency": "CRC",
+      "model": "linear",
+      "mae_model": 6883.467984992351,
+      "mae_baseline": 6625.0,
+      "relative_mae_improvement": -0.039,
+      "r2": 0.22173232719080482,
+      "adopt_if_improvement_ge_0.1": false
+    },
+    {
+      "currency": "CRC",
+      "model": "tree",
+      "mae_model": 7964.597826086957,
+      "mae_baseline": 6625.0,
+      "relative_mae_improvement": -0.2022,
+      "r2": -0.04281789280148818,
+      "adopt_if_improvement_ge_0.1": false
+    },
+    {
+      "currency": "USD",
+      "model": "linear",
+      "mae_model": 192.15204873159382,
+      "mae_baseline": 14.875,
+      "relative_mae_improvement": -11.9178,
+      "r2": -29.232779572637657,
+      "adopt_if_improvement_ge_0.1": false
+    },
+    {
+      "currency": "USD",
+      "model": "tree",
+      "mae_model": 28.02380952380952,
+      "mae_baseline": 14.875,
+      "relative_mae_improvement": -0.884,
+      "r2": 0.0967692974561557,
+      "adopt_if_improvement_ge_0.1": false
+    }
+  ]
+}
