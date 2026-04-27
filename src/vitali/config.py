@@ -32,7 +32,7 @@ class ModelingConfig:
 class IncomeDataConfig:
     """Income extract settings for reproducible exploratory analysis."""
 
-    source_file: str = "data/external/DatosVitali_ingresos_anonimizados.csv"
+    source_file: str = "data/raw/airbnb/Ingresos_Vitali_ingresos_anonimizados.csv"
     date_columns: list[str] = field(
         default_factory=lambda: ["movement_date", "booking_date", "check_in", "check_out"]
     )

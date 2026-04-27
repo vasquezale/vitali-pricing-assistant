@@ -21,7 +21,7 @@ data:
   # currency: "USD"  # o "CRC"
 
 income_data:
-  source_file: "data/external/DatosVitali_ingresos_anonimizados.csv"
+  source_file: "data/raw/airbnb/Ingresos_Vitali_ingresos_anonimizados.csv"
   date_columns:
     - "movement_date"
     - "booking_date"

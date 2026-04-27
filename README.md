@@ -7,8 +7,9 @@
 ## Status
 
 Project scaffolding is in place, Phase 1 is closed with explicit reservations, and
-Phase 2 remains blocked until the existing business source files are copied into a
-controlled local `data/raw/` layout and prepared for inspection.
+Phase 2 can now start from the currently available local `data/raw/` sources.
+What remains uncertain is not file placement, but whether the available scope is
+enough for a green, yellow, or red gate decision.
 
 ## Repo vs Vault
 
@@ -43,7 +44,7 @@ data/
       FINCA VITALI _ Contabilidad Administrativa _ 2025.xlsx
       FINCA VITALI _ Contabilidad Administrativa _ 2026.xlsx
     airbnb/
-      DatosVitali_ingresos_anonimizados.csv
+      Ingresos_Vitali_ingresos_anonimizados.csv
 ```
 
 The files stay local and gitignored. The value is reproducibility, not publication.
@@ -63,13 +64,13 @@ uv run bash scripts/run_quality_checks.sh
 
 The project now includes a minimal reproducible path for the anonymized income extract.
 
-1. Place the sanitized CSV at `data/external/DatosVitali_ingresos_anonimizados.csv`
+1. Place the local CSV at `data/raw/airbnb/Ingresos_Vitali_ingresos_anonimizados.csv`
    or pass a custom path with `--input`.
 2. Generate a compact JSON profile:
 
 ```bash
 uv run python scripts/profile_income_data.py \
-  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --input /absolute/path/to/Ingresos_Vitali_ingresos_anonimizados.csv \
   --output artifacts/income_profile.json
 ```
 
@@ -80,7 +81,7 @@ To generate a more analytical descriptive summary:
 
 ```bash
 uv run python scripts/summarize_income_data.py \
-  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --input /absolute/path/to/Ingresos_Vitali_ingresos_anonimizados.csv \
   --json-output artifacts/income_summary.json \
   --markdown-output artifacts/income_summary.md
 ```
@@ -93,7 +94,7 @@ To build a reservation-level analysis table for downstream EDA:
 
 ```bash
 uv run python scripts/build_income_analysis_table.py \
-  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --input /absolute/path/to/Ingresos_Vitali_ingresos_anonimizados.csv \
   --output artifacts/income_analysis_table.csv
 ```
 
@@ -103,7 +104,7 @@ deliberately:
 
 ```bash
 uv run python scripts/build_income_analysis_table.py \
-  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --input /absolute/path/to/Ingresos_Vitali_ingresos_anonimizados.csv \
   --output artifacts/income_analysis_table.csv \
   --fx-rates-json '{"USD":510.0,"CRC":1.0}'
 ```
@@ -122,7 +123,7 @@ axis for monetary metrics:
 
 ```bash
 uv run python scripts/summarize_income_segments.py \
-  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --input /absolute/path/to/Ingresos_Vitali_ingresos_anonimizados.csv \
   --json-output artifacts/income_segment_summary.json \
   --markdown-output artifacts/income_segment_summary.md
 ```
@@ -135,7 +136,7 @@ To derive reproducible narrative insights from those segments:
 
 ```bash
 uv run python scripts/generate_income_segment_insights.py \
-  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --input /absolute/path/to/Ingresos_Vitali_ingresos_anonimizados.csv \
   --json-output artifacts/income_segment_insights.json \
   --markdown-output artifacts/income_segment_insights.md
 ```
@@ -147,7 +148,7 @@ To generate quick visual diagnostics of how income behaves over time by room:
 
 ```bash
 uv run python scripts/plot_income_trends.py \
-  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --input /absolute/path/to/Ingresos_Vitali_ingresos_anonimizados.csv \
   --output-dir artifacts/income_trends
 ```
 
