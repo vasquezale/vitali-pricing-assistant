@@ -42,7 +42,9 @@ PROJECT_STATUS.md
 context/
 research/
 notebooks/
-docs/
+# Contenido de docs/ ignorado por defecto; excepcion explicita abajo (Git no re-incluye archivos si el padre `docs/` esta ignorado entero).
+docs/*
+!docs/DATA_DICTIONARY.md
 
 # === Python ===
 __pycache__/
