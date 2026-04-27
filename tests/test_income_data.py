@@ -195,6 +195,8 @@ def test_build_income_segment_insights_returns_currency_scoped_findings(sample_i
     assert insights["insight_count"] >= 2
     assert all("currency" in item for item in insights["insights"])
     assert all("message" in item for item in insights["insights"])
+    assert all("confidence_label" in item for item in insights["insights"])
+    assert all("confidence_reason" in item for item in insights["insights"])
 
 
 def test_render_income_segment_insights_markdown_contains_insight_section(sample_income_csv: Path) -> None:
@@ -207,4 +209,5 @@ def test_render_income_segment_insights_markdown_contains_insight_section(sample
 
     assert "# Income Segment Insights" in report
     assert "## Insights" in report
-    assert "- [CRC]" in report or "- [USD]" in report
+    assert "- [CRC] (" in report or "- [USD] (" in report
+    assert "Support:" in report

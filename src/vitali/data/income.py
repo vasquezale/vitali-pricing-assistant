@@ -332,6 +332,12 @@ def build_income_segment_insights(summary: dict[str, object]) -> dict[str, objec
     by_month_currency = summary["by_month_currency"]
     insights.extend(_build_month_peak_insights(by_month_currency))
 
+    for insight in insights:
+        confidence = _assess_insight_confidence(insight)
+        insight["confidence_label"] = confidence["label"]
+        insight["confidence_score"] = confidence["score"]
+        insight["confidence_reason"] = confidence["reason"]
+
     return {
         "summary_scope": summary["summary_scope"],
         "insight_count": len(insights),
@@ -359,7 +365,10 @@ def render_income_segment_insights_markdown(insights_payload: dict[str, object],
         "## Insights",
     ]
     for insight in insights_payload["insights"]:
-        lines.append(f"- [{insight['currency']}] {insight['message']}")
+        lines.append(
+            f"- [{insight['currency']}] ({insight['confidence_label']}) {insight['message']} "
+            f"Support: {insight['confidence_reason']}."
+        )
     lines.append("")
     return "\n".join(lines)
 
@@ -634,6 +643,8 @@ def _build_unit_performance_insights(rows: list[dict[str, object]]) -> list[dict
                     "top_median_gross_adr": top["median_gross_adr"],
                     "bottom_unit": bottom["unit_id"],
                     "bottom_median_gross_adr": bottom["median_gross_adr"],
+                    "top_reservations": top["reservations"],
+                    "bottom_reservations": bottom["reservations"],
                 },
             }
         )
@@ -662,6 +673,8 @@ def _build_weekend_weekday_insights(rows: list[dict[str, object]]) -> list[dict[
                 "evidence": {
                     "weekend_median_gross_adr": weekend["median_gross_adr"],
                     "weekday_median_gross_adr": weekday["median_gross_adr"],
+                    "weekend_reservations": weekend["reservations"],
+                    "weekday_reservations": weekday["reservations"],
                 },
             }
         )
@@ -693,8 +706,10 @@ def _build_lead_bucket_insights(rows: list[dict[str, object]]) -> list[dict[str,
                 "evidence": {
                     "top_lead_bucket": top["lead_bucket"],
                     "top_median_gross_adr": top["median_gross_adr"],
+                    "top_reservations": top["reservations"],
                     "earliest_lead_bucket": earliest["lead_bucket"],
                     "earliest_median_gross_adr": earliest["median_gross_adr"],
+                    "earliest_reservations": earliest["reservations"],
                 },
             }
         )
@@ -721,7 +736,51 @@ def _build_month_peak_insights(rows: list[dict[str, object]]) -> list[dict[str, 
                     "check_in_year": top["check_in_year"],
                     "check_in_month": top["check_in_month"],
                     "median_gross_adr": top["median_gross_adr"],
+                    "reservations": top["reservations"],
                 },
             }
         )
     return insights
+
+
+def _assess_insight_confidence(insight: dict[str, object]) -> dict[str, object]:
+    evidence = insight["evidence"]
+    kind = insight["kind"]
+
+    if kind == "unit_adr_gap":
+        support = min(evidence["top_reservations"], evidence["bottom_reservations"])
+        return _confidence_from_support(
+            support,
+            reason=f"minimum segment support is {support} reservations across the compared units",
+        )
+
+    if kind == "weekend_weekday_gap":
+        support = min(evidence["weekend_reservations"], evidence["weekday_reservations"])
+        return _confidence_from_support(
+            support,
+            reason=f"minimum context support is {support} reservations across weekend vs weekday",
+        )
+
+    if kind == "lead_bucket_peak":
+        support = min(evidence["top_reservations"], evidence["earliest_reservations"])
+        return _confidence_from_support(
+            support,
+            reason=f"minimum bucket support is {support} reservations across the compared lead buckets",
+        )
+
+    if kind == "monthly_peak":
+        support = evidence["reservations"]
+        return _confidence_from_support(
+            support,
+            reason=f"peak month segment contains {support} reservations",
+        )
+
+    return {"label": "unknown", "score": 0.0, "reason": "no confidence rule defined"}
+
+
+def _confidence_from_support(support: int, reason: str) -> dict[str, object]:
+    if support >= 30:
+        return {"label": "high", "score": 0.9, "reason": reason}
+    if support >= 12:
+        return {"label": "medium", "score": 0.6, "reason": reason}
+    return {"label": "low", "score": 0.3, "reason": reason}

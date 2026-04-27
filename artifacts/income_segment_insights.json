@@ -25,8 +25,13 @@
         "top_unit": "room_b",
         "top_median_gross_adr": 77000.0,
         "bottom_unit": "room_a",
-        "bottom_median_gross_adr": 69000.0
-      }
+        "bottom_median_gross_adr": 69000.0,
+        "top_reservations": 116,
+        "bottom_reservations": 109
+      },
+      "confidence_label": "high",
+      "confidence_score": 0.9,
+      "confidence_reason": "minimum segment support is 109 reservations across the compared units"
     },
     {
       "kind": "unit_adr_gap",
@@ -36,8 +41,13 @@
         "top_unit": "room_b",
         "top_median_gross_adr": 200.0,
         "bottom_unit": "room_a",
-        "bottom_median_gross_adr": 165.0
-      }
+        "bottom_median_gross_adr": 165.0,
+        "top_reservations": 37,
+        "bottom_reservations": 34
+      },
+      "confidence_label": "high",
+      "confidence_score": 0.9,
+      "confidence_reason": "minimum segment support is 34 reservations across the compared units"
     },
     {
       "kind": "weekend_weekday_gap",
@@ -45,8 +55,13 @@
       "message": "Weekend check-ins show higher median gross ADR than weekday check-ins by 17000.00.",
       "evidence": {
         "weekend_median_gross_adr": 77000.0,
-        "weekday_median_gross_adr": 60000.0
-      }
+        "weekday_median_gross_adr": 60000.0,
+        "weekend_reservations": 174,
+        "weekday_reservations": 51
+      },
+      "confidence_label": "high",
+      "confidence_score": 0.9,
+      "confidence_reason": "minimum context support is 51 reservations across weekend vs weekday"
     },
     {
       "kind": "weekend_weekday_gap",
@@ -54,8 +69,13 @@
       "message": "Weekend check-ins show higher median gross ADR than weekday check-ins by 30.00.",
       "evidence": {
         "weekend_median_gross_adr": 180.0,
-        "weekday_median_gross_adr": 150.0
-      }
+        "weekday_median_gross_adr": 150.0,
+        "weekend_reservations": 51,
+        "weekday_reservations": 20
+      },
+      "confidence_label": "medium",
+      "confidence_score": 0.6,
+      "confidence_reason": "minimum context support is 20 reservations across weekend vs weekday"
     },
     {
       "kind": "lead_bucket_peak",
@@ -64,9 +84,14 @@
       "evidence": {
         "top_lead_bucket": "31+",
         "top_median_gross_adr": 77000.0,
+        "top_reservations": 37,
         "earliest_lead_bucket": "0-3",
-        "earliest_median_gross_adr": 73500.0
-      }
+        "earliest_median_gross_adr": 73500.0,
+        "earliest_reservations": 34
+      },
+      "confidence_label": "high",
+      "confidence_score": 0.9,
+      "confidence_reason": "minimum bucket support is 34 reservations across the compared lead buckets"
     },
     {
       "kind": "lead_bucket_peak",
@@ -75,9 +100,14 @@
       "evidence": {
         "top_lead_bucket": "31+",
         "top_median_gross_adr": 210.0,
+        "top_reservations": 3,
         "earliest_lead_bucket": "0-3",
-        "earliest_median_gross_adr": 162.5
-      }
+        "earliest_median_gross_adr": 162.5,
+        "earliest_reservations": 21
+      },
+      "confidence_label": "low",
+      "confidence_score": 0.3,
+      "confidence_reason": "minimum bucket support is 3 reservations across the compared lead buckets"
     },
     {
       "kind": "monthly_peak",
@@ -86,8 +116,12 @@
       "evidence": {
         "check_in_year": 2025,
         "check_in_month": 4,
-        "median_gross_adr": 100000.0
-      }
+        "median_gross_adr": 100000.0,
+        "reservations": 20
+      },
+      "confidence_label": "medium",
+      "confidence_score": 0.6,
+      "confidence_reason": "peak month segment contains 20 reservations"
     },
     {
       "kind": "monthly_peak",
@@ -96,8 +130,12 @@
       "evidence": {
         "check_in_year": 2025,
         "check_in_month": 12,
-        "median_gross_adr": 207.5
-      }
+        "median_gross_adr": 207.5,
+        "reservations": 20
+      },
+      "confidence_label": "medium",
+      "confidence_score": 0.6,
+      "confidence_reason": "peak month segment contains 20 reservations"
     }
   ]
 }
