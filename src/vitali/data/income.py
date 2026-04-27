@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Mapping
 
 import pandas as pd
 
@@ -204,6 +205,78 @@ def build_income_summary(records: pd.DataFrame) -> dict[str, object]:
         "by_lead_bucket": by_lead_bucket,
         "by_weekday_name": by_weekday_name,
     }
+
+
+def build_income_analysis_table(
+    records: pd.DataFrame,
+    fx_rates_to_crc: Mapping[str, float] | None = None,
+) -> pd.DataFrame:
+    """Create a reproducible reservation-level table for downstream analysis.
+
+    If exchange rates are not provided, monetary values are preserved in original
+    currency and normalization fields stay null. This avoids silent cross-currency
+    aggregation.
+    """
+    reservation_rows = records["record_type"] == "reservation"
+    reservations = records.loc[reservation_rows].copy()
+
+    reservations["gross_adr"] = reservations["gross_income"] / reservations["nights"]
+    reservations["net_adr"] = reservations["net_amount"] / reservations["nights"]
+    reservations["service_fee_rate"] = reservations["service_fee"] / reservations["gross_income"]
+    reservations["cleaning_fee_per_night"] = reservations["cleaning_fee"] / reservations["nights"]
+    reservations["check_in_year"] = reservations["check_in"].dt.year
+    reservations["check_in_month"] = reservations["check_in"].dt.month
+    reservations["check_in_week"] = reservations["check_in"].dt.isocalendar().week.astype("Int64")
+    reservations["check_in_dayofweek"] = reservations["check_in"].dt.dayofweek
+    reservations["check_in_weekday"] = reservations["check_in"].dt.day_name()
+    reservations["check_in_context"] = reservations["check_in_dayofweek"].map(
+        lambda day: "weekend" if day >= 4 else "weekday"
+    )
+    reservations["lead_bucket"] = reservations["booking_lead_days"].map(_bucket_lead_days)
+
+    reservations["fx_rate_to_crc"] = reservations["currency"].map(dict(fx_rates_to_crc or {}))
+    reservations["gross_income_crc"] = reservations["gross_income"] * reservations["fx_rate_to_crc"]
+    reservations["net_amount_crc"] = reservations["net_amount"] * reservations["fx_rate_to_crc"]
+    reservations["gross_adr_crc"] = reservations["gross_adr"] * reservations["fx_rate_to_crc"]
+    reservations["net_adr_crc"] = reservations["net_adr"] * reservations["fx_rate_to_crc"]
+    reservations["fx_normalization_status"] = reservations["fx_rate_to_crc"].map(
+        lambda rate: "normalized_to_crc" if pd.notna(rate) else "original_currency_only"
+    )
+
+    selected_columns = [
+        "unit_id",
+        "currency",
+        "check_in",
+        "check_out",
+        "booking_date",
+        "movement_date",
+        "income_year",
+        "check_in_year",
+        "check_in_month",
+        "check_in_week",
+        "check_in_dayofweek",
+        "check_in_weekday",
+        "check_in_context",
+        "nights",
+        "booking_lead_days",
+        "lead_bucket",
+        "gross_income",
+        "net_amount",
+        "gross_adr",
+        "net_adr",
+        "service_fee",
+        "service_fee_rate",
+        "cleaning_fee",
+        "cleaning_fee_per_night",
+        "lodging_tax",
+        "fx_rate_to_crc",
+        "gross_income_crc",
+        "net_amount_crc",
+        "gross_adr_crc",
+        "net_adr_crc",
+        "fx_normalization_status",
+    ]
+    return reservations[selected_columns].sort_values(["check_in", "unit_id"]).reset_index(drop=True)
 
 
 def render_income_summary_markdown(summary: dict[str, object], source_name: str) -> str:

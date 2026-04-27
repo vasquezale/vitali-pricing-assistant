@@ -67,6 +67,25 @@ This summary stays within the current project guardrails: it is descriptive and
 reproducible, but it is not a substitute for profitability modeling, market
 analysis, or a formal Fase 2 gate.
 
+To build a reservation-level analysis table for downstream EDA:
+
+```bash
+uv run python scripts/build_income_analysis_table.py \
+  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --output artifacts/income_analysis_table.csv
+```
+
+This table preserves original currency by default and does not invent exchange
+rates. If you later decide on explicit normalization inputs, you can pass them
+deliberately:
+
+```bash
+uv run python scripts/build_income_analysis_table.py \
+  --input /absolute/path/to/DatosVitali_ingresos_anonimizados.csv \
+  --output artifacts/income_analysis_table.csv \
+  --fx-rates-json '{"USD":510.0,"CRC":1.0}'
+```
+
 ## Safe Publication Flow
 
 ```bash

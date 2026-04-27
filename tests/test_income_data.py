@@ -7,6 +7,7 @@ import pytest
 
 from vitali.config import IncomeDataConfig
 from vitali.data.income import (
+    build_income_analysis_table,
     build_income_profile,
     build_income_summary,
     load_income_data,
@@ -97,3 +98,28 @@ def test_render_income_summary_markdown_contains_key_sections(sample_income_csv:
     assert "## By Unit and Currency" in report
     assert "## Weekend vs Weekday Check-in" in report
     assert "## Booking Lead Buckets" in report
+
+
+def test_build_income_analysis_table_preserves_original_currency_when_no_fx(sample_income_csv: Path) -> None:
+    dataset = load_income_data(sample_income_csv, IncomeDataConfig())
+
+    table = build_income_analysis_table(dataset.records)
+
+    assert len(table) == 2
+    assert set(table["fx_normalization_status"]) == {"original_currency_only"}
+    assert table["gross_income_crc"].isna().all()
+    assert set(table["check_in_context"]) == {"weekday", "weekend"}
+
+
+def test_build_income_analysis_table_normalizes_when_fx_rates_are_provided(sample_income_csv: Path) -> None:
+    dataset = load_income_data(sample_income_csv, IncomeDataConfig())
+
+    table = build_income_analysis_table(dataset.records, fx_rates_to_crc={"USD": 510.0, "CRC": 1.0})
+
+    usd_row = table.loc[table["currency"] == "USD"].iloc[0]
+    crc_row = table.loc[table["currency"] == "CRC"].iloc[0]
+
+    assert usd_row["fx_normalization_status"] == "normalized_to_crc"
+    assert crc_row["fx_normalization_status"] == "normalized_to_crc"
+    assert usd_row["gross_income_crc"] == pytest.approx(124.0 * 510.0)
+    assert crc_row["gross_income_crc"] == pytest.approx(186000.0)
