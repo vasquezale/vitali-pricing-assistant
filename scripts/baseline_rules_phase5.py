@@ -21,11 +21,12 @@ import pandas as pd
 
 from vitali.models.baseline_heuristic import BaselineHeuristicRules, regression_metrics, temporal_train_val_split
 from vitali.models.sklearn_phase5 import eval_linear_and_tree
+from vitali.contracts.artifacts import ARTIFACTS
 
 
 def default_reservations_path(root: Path) -> Path:
-    interim = root / "data" / "interim" / "income_reservations_fx_crc_interim.parquet"
-    fallback = root / "data" / "sanitized" / "income_reservations_fx_crc_sanitized.parquet"
+    interim = root / ARTIFACTS.income_reservations_fx_crc_interim_parquet
+    fallback = root / ARTIFACTS.income_reservations_fx_crc_sanitized_parquet
     if interim.is_file():
         return interim
     return fallback
@@ -56,7 +57,7 @@ def main() -> int:
     pred_val = baseline.predict(val)
     y_val = val["gross_income"].astype(float) / val["nights"].replace({0: float("nan")}).astype(float)
 
-    out_dir = root / "artifacts" / "baseline"
+    out_dir = (root / ARTIFACTS.phase5_metrics_json).parent
     out_dir.mkdir(parents=True, exist_ok=True)
 
     rows = []
@@ -129,7 +130,7 @@ def main() -> int:
                     }
                 )
 
-    (out_dir / "phase5_metrics.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    ARTIFACTS.resolve(root).phase5_metrics_json.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(json.dumps(payload, indent=2))
     return 0
 

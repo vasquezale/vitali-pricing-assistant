@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from vitali.config import ExpenseDataConfig
+from vitali.contracts.artifacts import ARTIFACTS, REQUIRED_INCOME_FX_COLUMNS
 from vitali.data.expenses import load_expense_data
 
 MONTH_SHEETS_12 = [
@@ -82,16 +83,7 @@ def load_expenses(year: int, root: Path | None = None) -> pd.DataFrame:
 def income_fx_csv_path(root: Path | None = None) -> Path:
     """Path to `artifacts/income_analysis_table_fx.csv` (FX-normalized income table)."""
     base = project_root(root)
-    return base / "artifacts" / "income_analysis_table_fx.csv"
-
-
-REQUIRED_INCOME_FX_COLUMNS = [
-    "check_in",
-    "gross_income_crc",
-    "net_amount_crc",
-    "unit_id",
-    "currency",
-]
+    return base / ARTIFACTS.income_analysis_table_fx_csv
 
 
 def load_income_fx(

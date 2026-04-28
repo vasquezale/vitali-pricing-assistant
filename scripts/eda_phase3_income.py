@@ -23,6 +23,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
 
+from vitali.contracts.artifacts import ARTIFACTS
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Phase 3 income EDA (descriptive).")
@@ -30,7 +32,7 @@ def main() -> int:
     args = parser.parse_args()
     root: Path = args.root.resolve()
 
-    inp = root / "data" / "sanitized" / "income_reservations_fx_crc_sanitized.parquet"
+    inp = root / ARTIFACTS.income_reservations_fx_crc_sanitized_parquet
     if not inp.is_file():
         raise SystemExit(f"Missing {inp}; run scripts/prepare_phase3_datasets.py first.")
 
