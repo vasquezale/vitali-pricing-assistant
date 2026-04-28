@@ -66,6 +66,10 @@ dist/
 .venv/
 .python-version
 
+# === FX rates (local source-of-truth) ===
+# Keep an example under configs/, but ignore local rates file.
+configs/fx_rates_to_crc.json
+
 # === W&B ===
 wandb/
 
