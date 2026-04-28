@@ -1,0 +1,111 @@
+{
+  "method": "rolling_forward_expanding_window",
+  "dec_002_compliant": true,
+  "test_months_per_fold": 2,
+  "n_folds_attempted": 4,
+  "n_folds_executed": 4,
+  "input": "/Users/ale/Documents/GitHub_Repositorios/proyecto-vitali/data/interim/income_reservations_fx_crc_interim.parquet",
+  "gate": "Amarillo",
+  "folds": [
+    {
+      "fold": "2025-06 \u2192 2025-07",
+      "n_train": 189,
+      "n_test": 35,
+      "by_currency": [
+        {
+          "currency": "CRC",
+          "n": 35,
+          "mae": 6942.8571,
+          "mape_pct": 10.7225,
+          "mae_naive_median": 7628.5714,
+          "mae_improvement_vs_naive_pct": 8.99
+        }
+      ]
+    },
+    {
+      "fold": "2025-08 \u2192 2025-09",
+      "n_train": 224,
+      "n_test": 1,
+      "by_currency": [
+        {
+          "currency": "CRC",
+          "n": 1,
+          "mae": 13000.0,
+          "mape_pct": 14.4444,
+          "mae_naive_median": 0.0,
+          "mae_improvement_vs_naive_pct": 0.0
+        }
+      ]
+    },
+    {
+      "fold": "2025-10 \u2192 2025-11",
+      "n_train": 228,
+      "n_test": 36,
+      "by_currency": [
+        {
+          "currency": "USD",
+          "n": 36,
+          "mae": 34.2292,
+          "mape_pct": 21.8325,
+          "mae_naive_median": 24.9236,
+          "mae_improvement_vs_naive_pct": -37.34
+        }
+      ]
+    },
+    {
+      "fold": "2025-12 \u2192 2026-01",
+      "n_train": 264,
+      "n_test": 32,
+      "by_currency": [
+        {
+          "currency": "USD",
+          "n": 32,
+          "mae": 32.8594,
+          "mape_pct": 16.0349,
+          "mae_naive_median": 22.6094,
+          "mae_improvement_vs_naive_pct": -45.34
+        }
+      ]
+    }
+  ],
+  "summary_by_currency": {
+    "CRC": {
+      "n_folds_with_data": 2,
+      "mae_mean": 9971.4286,
+      "mae_std": 3028.5714,
+      "mae_min": 6942.8571,
+      "mae_max": 13000.0,
+      "mape_pct_mean": 12.5834,
+      "mape_pct_std": 1.8609,
+      "mae_improvement_vs_naive_pct_mean": 4.5
+    },
+    "USD": {
+      "n_folds_with_data": 2,
+      "mae_mean": 33.5443,
+      "mae_std": 0.6849,
+      "mae_min": 32.8594,
+      "mae_max": 34.2292,
+      "mape_pct_mean": 18.9337,
+      "mape_pct_std": 2.8988,
+      "mae_improvement_vs_naive_pct_mean": -41.34
+    }
+  },
+  "residual_stats_by_currency": {
+    "CRC": {
+      "n_total": 36,
+      "mean_bias": -2833.3333,
+      "std": 9263.1288,
+      "p25": -9000.0,
+      "p50": 1000.0,
+      "p75": 3000.0
+    },
+    "USD": {
+      "n_total": 68,
+      "mean_bias": 28.3566,
+      "std": 30.5813,
+      "p25": 10.0,
+      "p50": 22.5,
+      "p75": 47.5
+    }
+  }
+}

@@ -6,10 +6,28 @@
 
 ## Status
 
-Project scaffolding is in place, Phase 1 is closed with explicit reservations, and
-Phase 2 can now start from the currently available local `data/raw/` sources.
-What remains uncertain is not file placement, but whether the available scope is
-enough for a green, yellow, or red gate decision.
+This repo implements a **pipeline**, not an automatic pricing engine.
+
+### Current state (methodological gate: **Yellow**)
+
+- **Product scope**: decision support (ranges + evidence), **not** automatic optimization.
+- **Gate**: **Yellow** (insufficient economic integration for strong profitability claims).
+- **Recent technical phases**:
+  - **F3** data preparation to deterministic `parquet` lanes (**completed**)
+  - **F4** EDA snapshot artifacts (**completed**)
+  - **F5** baseline heuristic (rules-first) (**completed**)
+  - **F6** rolling-forward evaluation (**completed**)
+- **F7** (dashboard / executive report): **active / started**, but must remain conditioned by the Yellow gate constraints.
+
+### Yellow gate implications (what we do / do not claim)
+
+- **No clean P&L**: we do **not** present defensible net profitability per reservation (fees/payout/costs are not reconciled at that level).
+- **CRC vs USD lanes**:
+  - **CRC** is the most useful lane as an **orientative reference** (per Phase 6 results).
+  - **USD** has **high uncertainty** and must be communicated with explicit warnings.
+- **FX policy**:
+  - The repo provides a **reproducible technical mechanism** for FX normalization inputs.
+  - The **economic/business policy** (which FX rates to adopt and why) is **not closed** yet.
 
 ## Repo vs Vault
 
@@ -57,8 +75,22 @@ uv sync
 uv sync --extra dev
 
 # Run quality checks
-uv run bash scripts/run_quality_checks.sh
+bash scripts/run_quality_checks.sh
+
+# Run full test suite
+uv run pytest
 ```
+
+## Critical artifact: `artifacts/income_analysis_table_fx.csv`
+
+This CSV is a **hard dependency** for Phase 2 (monthly pipeline) and Phase 3 (FX join + deterministic lanes).
+
+- **Artifact**: `artifacts/income_analysis_table_fx.csv`
+- **Official producer**: `scripts/build_income_analysis_table_fx.py`
+- **Technical contract (canonical path + minimal schema)**: `src/vitali/contracts/artifacts.py`
+- **Contract test**: `tests/contracts/test_income_fx_producer.py`
+
+Important: the producer enforces **explicit FX inputs** (so we do not “invent” rates). This makes the mechanism reproducible while keeping the **FX economic policy** explicitly **open**.
 
 ## Phase 2 — monthly data pipeline (Yellow gate)
 
@@ -89,6 +121,31 @@ Run focused tests (with coverage on the pipeline modules only):
 
 ```bash
 uv run pytest tests/data/ -q --cov=vitali.data --cov-fail-under=80
+```
+
+## Minimal operational commands (existing entrypoints)
+
+Run these from the repo root.
+
+```bash
+# Quality + tests
+bash scripts/run_quality_checks.sh
+uv run pytest
+
+# Build the critical FX analysis table (writes artifacts/income_analysis_table_fx.csv)
+uv run python scripts/build_income_analysis_table_fx.py
+
+# Phase 3: deterministic datasets (writes data/sanitized/* and data/interim/*)
+uv run python scripts/prepare_phase3_datasets.py
+
+# Phase 4: EDA snapshot artifacts (writes artifacts/eda/*)
+uv run python scripts/eda_phase3_income.py
+
+# Phase 5: baseline heuristic metrics (writes artifacts/baseline/phase5_metrics.json)
+uv run python scripts/baseline_rules_phase5.py
+
+# Phase 6: rolling-forward evaluation (writes artifacts/evaluation/phase6_rolling_metrics.json)
+uv run python scripts/rolling_forward_phase6.py
 ```
 
 ## Reproducible Income Analysis Base
@@ -140,8 +197,8 @@ uv run python scripts/build_income_analysis_table.py \
   --fx-rates-json '{"USD":510.0,"CRC":1.0}'
 ```
 
-The same policy can be declared in [configs/base.yaml](/Users/ale/Documents/GitHub_Repositorios/proyecto-vitali/configs/base.yaml)
-under `fx_normalization`. The recommended default for the current phase is:
+The same policy can be declared in `configs/base.yaml` under `fx_normalization`.
+The recommended default for the current phase is:
 
 - `enabled: false`
 - `strategy: preserve_original`
@@ -219,7 +276,7 @@ Markdown summaries alone.
 git switch codex/public-ready
 
 # 2. Run quality checks
-uv run bash scripts/run_quality_checks.sh
+bash scripts/run_quality_checks.sh
 
 # 3. Run the pre-push security review
 bash scripts/pre_push_security_check.sh
