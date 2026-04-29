@@ -1,49 +1,57 @@
 # Airbnb Demand & Pricing Analytics
 
-**End-to-end data analytics pipeline** that turns raw reservation data from an Airbnb property into actionable pricing decisions — delivered through an interactive dashboard designed for non-technical users.
+**Decision-support analytics product** that turns raw Airbnb reservation history into pricing guidance, demand insights, and business-facing visualizations for non-technical users.
 
-Built with real business data from a short-term rental property in Cartago, Costa Rica (296 reservations · 2 units · ~2 years of data).
+Built with real business data from a short-term rental property in Cartago, Costa Rica (`296 reservations` · `2 units` · `~2 years of data`).
 
 ---
 
 ## What it does
 
-Takes raw, anonymized reservation exports and produces three business outputs:
+Takes raw, anonymized reservation exports and translates them into three business outputs:
 
-- **Demand patterns** — identifies which months, days, and unit types drive the most revenue, with statistical support behind every claim
-- **Pricing reference** — context-aware price ranges by unit, month, and weekday vs. weekend, based on observed historical rates
-- **Balance estimates** — monthly gross income vs. estimated expenses across three cost scenarios, with forward projections
+- **Demand patterns** — identifies which months, day types, and units drive stronger commercial performance
+- **Pricing reference** — provides context-aware price ranges by unit, month, and weekday vs. weekend based on observed historical behavior
+- **Balance estimates** — compares monthly gross income against estimated expenses across multiple cost scenarios
 
-All outputs are available through an interactive dashboard that requires zero technical knowledge to use.
+All outputs are surfaced through an interactive dashboard designed for decision support rather than black-box automation.
 
 ---
 
 ## Dashboard
 
-| Executive Summary | Pricing Reference | Demand Heatmap |
+| Executive summary | Pricing reference | Trends and history |
 |---|---|---|
-| ![Executive Summary](assets/screenshots/01_resumen_ejecutivo.png) | ![Pricing](assets/screenshots/02_capa_precio.png) | ![Trends](assets/screenshots/03_historia_tendencias.png) |
+| ![Executive summary](assets/screenshots/01_resumen_ejecutivo.png) | ![Pricing reference](assets/screenshots/02_capa_precio.png) | ![History and trends](assets/screenshots/03_historia_tendencias.png) |
 
-The dashboard has five views:
+Main views in the current demo:
 
-- **Executive Summary** — key metrics at a glance: median daily rate, top-performing unit, peak month, total reservations, income trend, and projected balance
+- **Business Summary** — key metrics at a glance: nightly median rate, top-performing unit, peak month, total reservations, income trend, and projected balance
 - **Pricing Reference** — select unit, month, and day type to get an observed price range with historical support count; compare against a custom price
 - **Monthly Balance** — income vs. estimated expenses with three cost scenarios; projected forward balance curve
-- **History & Trends** — income evolution over time, average daily rate by unit, and a reservations heatmap
-- **Model Evaluation** — rolling-forward validation results for the baseline pricing model
+- **History & Trends** — income evolution over time, nightly rate by unit, and a reservations heatmap
+
+Technical evaluation is optional and only shown when technical artifacts are available.
 
 ---
 
-## Key findings
+## Why this project is interesting
 
-- **Weekend check-ins command ~22% higher daily rates** than weekday check-ins (CRC lane)
-- **Room B consistently outperforms Room A** by ₡8,000 CRC / $35 USD in median daily rate
-- **Peak demand concentrates in April** (domestic market) and **December** (international market)
-- Advance bookings of 31+ days correlate with slightly higher rates — an actionable pricing lever
+- Built from a real hospitality decision problem, not a toy dataset
+- Connects data cleaning, analytics, business logic, and product delivery in one pipeline
+- Frames outputs for an operational user who needs guidance, not ML jargon
+- Preserves privacy by keeping raw reservation data anonymized and gitignored
+
+## Example findings
+
+- **Weekend check-ins command ~22% higher daily rates** than weekday check-ins
+- **One unit consistently outperforms the other** by roughly `CRC 8,000` in median daily rate
+- **Peak demand concentrates in April and December**, revealing strong seasonal pricing windows
+- **Longer booking lead times correlate with slightly higher rates**, suggesting a usable pricing lever
 
 ---
 
-## Stack
+## Tech stack
 
 | Layer | Tools |
 |---|---|
@@ -67,19 +75,19 @@ uv sync
 uv run streamlit run src/vitali/dashboard/app.py
 ```
 
-> The app loads from local data files (gitignored for privacy). The dashboard structure, pipeline logic, and all analytical code run without any external API or cloud dependency.
+> The app loads from local data files (gitignored for privacy). The dashboard structure, pipeline logic, and analytical code run without external APIs or cloud dependencies.
 
 ---
 
 ## Project structure
 
 ```
-src/vitali/
+src/vitali/    — core package
   data/        — loaders, validators, cleaning pipeline
-  dashboard/   — Streamlit app, Plotly chart factories
+  dashboard/   — Streamlit app and Plotly chart factories
   mvp/         — pricing and balance business logic
-  models/      — baseline model and sklearn utilities
-tests/         — full pytest suite (TDD)
+  models/      — baseline model and evaluation utilities
+tests/         — pytest suite
 scripts/       — reproducible pipeline scripts
 artifacts/     — tracked analytical outputs
 configs/       — YAML configuration
@@ -89,4 +97,4 @@ configs/       — YAML configuration
 
 ## Privacy
 
-Real reservation data is anonymized and gitignored. Only aggregated artifacts and production code are committed to this repository.
+Real reservation data is anonymized and gitignored. Only production code and safe analytical artifacts are committed to this repository.
