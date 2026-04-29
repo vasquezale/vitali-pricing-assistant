@@ -1,103 +1,92 @@
-# Proyecto Vitali
+# Airbnb Demand & Pricing Analytics
 
-**Pricing assistant and decision support system** for an Airbnb property in Cartago, Costa Rica.
+**End-to-end data analytics pipeline** that turns raw reservation data from an Airbnb property into actionable pricing decisions — delivered through an interactive dashboard designed for non-technical users.
 
-> Analyzes historical reservation data to identify pricing patterns, seasonality, and profitability segments — then delivers actionable recommendations backed by evidence.
-
-## Status
-
-Early development. Project scaffolding is in place, Phase 1 is still being closed, and Phase 2 remains blocked until Airbnb raw data is available locally under `data/raw/`.
-
-## Repo vs Vault
-
-This repository is intentionally limited to **practical, executable project assets**:
-
-- production code,
-- tests,
-- configuration,
-- scripts,
-- lightweight artifacts needed for delivery.
-
-Project context, research, agent coordination, prompts, and living documentation are kept in the private vault outside the repository.
-
-## Privacy and Data Handling
-
-- Real Airbnb exports, guest data, sanitized datasets, and intermediate datasets must stay under `data/` and are never committed.
-- Secrets, local credentials, and personal tooling files must stay in ignored locations such as `.env`, `secrets/`, or repo-local excludes.
-- If a file should help other collaborators without exposing secrets, commit a safe template such as `.env.example` instead of the real file.
-
-## Quick Start
-
-```bash
-# Setup environment
-uv sync
-uv sync --extra dev
-
-# Run quality checks
-uv run bash scripts/run_quality_checks.sh
-```
-
-## Safe Publication Flow
-
-```bash
-# 1. Work from the public-safe branch
-git switch codex/public-ready
-
-# 2. Run quality checks
-uv run bash scripts/run_quality_checks.sh
-
-# 3. Run the pre-push security review
-bash scripts/pre_push_security_check.sh
-```
-
-Create the first GitHub remote from `codex/public-ready`, never from `main`.
-
-## Project Structure
-
-```
-src/vitali/     — Production code
-tests/          — Pytest test suite
-configs/        — YAML configuration
-scripts/        — Operational scripts and quality checks
-artifacts/      — Lightweight tracked artifacts only
-data/           — Local-only datasets (gitignored)
-```
-
-## Methodology
-
-CRISP-DM adapted with a **data viability gate** — if the data doesn't support ML, the project delivers analytical rules and descriptive insights (still valuable).
+Built with real business data from a short-term rental property in Cartago, Costa Rica (296 reservations · 2 units · ~2 years of data).
 
 ---
 
-## Dashboard — F7 MVP
+## What it does
 
-An interactive decision-support dashboard built with Streamlit and Plotly. Provides actionable pricing guidance and a monthly balance estimate for property managers, with no manual spreadsheet work required.
+Takes raw, anonymized reservation exports and produces three business outputs:
 
-### What it shows
+- **Demand patterns** — identifies which months, days, and unit types drive the most revenue, with statistical support behind every claim
+- **Pricing reference** — context-aware price ranges by unit, month, and weekday vs. weekend, based on observed historical rates
+- **Balance estimates** — monthly gross income vs. estimated expenses across three cost scenarios, with forward projections
 
-**Executive Summary** — Key business metrics at a glance: median ADR by unit, peak demand month, reservation count, monthly income trend, and projected balance under a conservative scenario.
+All outputs are available through an interactive dashboard that requires zero technical knowledge to use.
 
-**Pricing Layer (Capa 1)** — Context-aware price reference by unit, month, and day type (weekday vs. weekend). Includes observed price ranges (p25–p75), support count, and an optional comparison against a manually entered price.
+---
 
-**Balance Layer (Capa 2)** — Monthly estimated balance: gross income vs. estimated expenses across three cost scenarios (conservative, medium, wide), with projected forward-looking balance curve.
+## Dashboard
 
-**History & Trends** — Monthly income evolution by unit and currency, median ADR over time, and a reservations heatmap to identify seasonal demand concentration.
-
-**Evaluation** — Rolling-forward validation metrics for the baseline model, with explicit methodology warnings (Yellow Gate).
-
-### Screenshots
-
-| Executive Summary | Pricing Reference | History & Trends |
+| Executive Summary | Pricing Reference | Demand Heatmap |
 |---|---|---|
-| ![Executive Summary](assets/screenshots/01_resumen_ejecutivo.png) | ![Pricing Layer](assets/screenshots/02_capa_precio.png) | ![Trends](assets/screenshots/03_historia_tendencias.png) |
+| ![Executive Summary](assets/screenshots/01_resumen_ejecutivo.png) | ![Pricing](assets/screenshots/02_capa_precio.png) | ![Trends](assets/screenshots/03_historia_tendencias.png) |
 
-### How to run
+The dashboard has five views:
+
+- **Executive Summary** — key metrics at a glance: median daily rate, top-performing unit, peak month, total reservations, income trend, and projected balance
+- **Pricing Reference** — select unit, month, and day type to get an observed price range with historical support count; compare against a custom price
+- **Monthly Balance** — income vs. estimated expenses with three cost scenarios; projected forward balance curve
+- **History & Trends** — income evolution over time, average daily rate by unit, and a reservations heatmap
+- **Model Evaluation** — rolling-forward validation results for the baseline pricing model
+
+---
+
+## Key findings
+
+- **Weekend check-ins command ~22% higher daily rates** than weekday check-ins (CRC lane)
+- **Room B consistently outperforms Room A** by ₡8,000 CRC / $35 USD in median daily rate
+- **Peak demand concentrates in April** (domestic market) and **December** (international market)
+- Advance bookings of 31+ days correlate with slightly higher rates — an actionable pricing lever
+
+---
+
+## Stack
+
+| Layer | Tools |
+|---|---|
+| Data processing | Python · pandas · NumPy |
+| Modeling | scikit-learn · statistical baseline |
+| Dashboard | Streamlit · Plotly |
+| Testing | pytest · TDD throughout |
+| Environment | uv · pyproject.toml |
+
+---
+
+## Run it locally
 
 ```bash
+# 1. Clone and install dependencies
+git clone https://github.com/vasquezale/vitali-pricing-assistant.git
+cd vitali-pricing-assistant
 uv sync
+
+# 2. Launch the dashboard
 uv run streamlit run src/vitali/dashboard/app.py
 ```
 
-The app loads from local gitignored data files. No API keys or external services required.
+> The app loads from local data files (gitignored for privacy). The dashboard structure, pipeline logic, and all analytical code run without any external API or cloud dependency.
 
-> **Methodology note:** This dashboard is a decision-support tool, not an automatic pricing engine or formal financial statement. All monetary recommendations include explicit uncertainty ranges and Yellow Gate warnings where applicable.
+---
+
+## Project structure
+
+```
+src/vitali/
+  data/        — loaders, validators, cleaning pipeline
+  dashboard/   — Streamlit app, Plotly chart factories
+  mvp/         — pricing and balance business logic
+  models/      — baseline model and sklearn utilities
+tests/         — full pytest suite (TDD)
+scripts/       — reproducible pipeline scripts
+artifacts/     — tracked analytical outputs
+configs/       — YAML configuration
+```
+
+---
+
+## Privacy
+
+Real reservation data is anonymized and gitignored. Only aggregated artifacts and production code are committed to this repository.
