@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Pricing assistant and decision support system for an Airbnb in Cartago, Costa Rica"
 requires-python = ">=3.12"
 dependencies = [
+    "pyarrow>=16.0.0",
     "pandas>=2.2.0",
     "numpy>=1.26.0",
     "matplotlib>=3.8.0",
@@ -29,6 +30,7 @@ tracking = [
 ]
 dev = [
     "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
     "ruff>=0.2.0",
     "pylint>=3.0.0",
 ]
@@ -61,3 +63,20 @@ disable = ["too-many-arguments", "too-few-public-methods"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["vitali.data"]
+omit = [
+    "*/tests/*",
+    "*/vitali/data/income.py",
+    "*/vitali/data/expenses.py",
+]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+
+[dependency-groups]
+dev = [
+    "playwright>=1.58.0",
+]

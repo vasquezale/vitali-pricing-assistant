@@ -1,0 +1,36 @@
+{
+  "generated_from": "/Users/ale/Documents/GitHub_Repositorios/proyecto-vitali/data/interim/income_reservations_fx_crc_interim.parquet",
+  "latest_check_in_observed": "2026-01-30",
+  "forecast_horizon_months": 3,
+  "currency": "CRC",
+  "method": "rango histórico mensual bruto en CRC por mes calendario (p25/mediana/p75), orientativo para F7-MVP",
+  "projections": [
+    {
+      "target_month": "2026-02",
+      "month": 2,
+      "gross_income_crc_p25": 2077000.0,
+      "gross_income_crc_median": 2077000.0,
+      "gross_income_crc_p75": 2077000.0,
+      "confidence": "baja",
+      "reason": "Basado en 1 meses históricos y 24 reservas agregadas para ese mes calendario."
+    },
+    {
+      "target_month": "2026-03",
+      "month": 3,
+      "gross_income_crc_p25": 1170000.0,
+      "gross_income_crc_median": 1170000.0,
+      "gross_income_crc_p75": 1170000.0,
+      "confidence": "baja",
+      "reason": "Basado en 1 meses históricos y 13 reservas agregadas para ese mes calendario."
+    },
+    {
+      "target_month": "2026-04",
+      "month": 4,
+      "gross_income_crc_p25": 1970000.0,
+      "gross_income_crc_median": 1970000.0,
+      "gross_income_crc_p75": 1970000.0,
+      "confidence": "baja",
+      "reason": "Basado en 1 meses históricos y 20 reservas agregadas para ese mes calendario."
+    }
+  ]
+}
