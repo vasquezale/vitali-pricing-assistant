@@ -66,3 +66,38 @@ data/           — Local-only datasets (gitignored)
 ## Methodology
 
 CRISP-DM adapted with a **data viability gate** — if the data doesn't support ML, the project delivers analytical rules and descriptive insights (still valuable).
+
+---
+
+## Dashboard — F7 MVP
+
+An interactive decision-support dashboard built with Streamlit and Plotly. Provides actionable pricing guidance and a monthly balance estimate for property managers, with no manual spreadsheet work required.
+
+### What it shows
+
+**Executive Summary** — Key business metrics at a glance: median ADR by unit, peak demand month, reservation count, monthly income trend, and projected balance under a conservative scenario.
+
+**Pricing Layer (Capa 1)** — Context-aware price reference by unit, month, and day type (weekday vs. weekend). Includes observed price ranges (p25–p75), support count, and an optional comparison against a manually entered price.
+
+**Balance Layer (Capa 2)** — Monthly estimated balance: gross income vs. estimated expenses across three cost scenarios (conservative, medium, wide), with projected forward-looking balance curve.
+
+**History & Trends** — Monthly income evolution by unit and currency, median ADR over time, and a reservations heatmap to identify seasonal demand concentration.
+
+**Evaluation** — Rolling-forward validation metrics for the baseline model, with explicit methodology warnings (Yellow Gate).
+
+### Screenshots
+
+| Executive Summary | Pricing Reference | History & Trends |
+|---|---|---|
+| ![Executive Summary](docs/screenshots/01_resumen_ejecutivo.png) | ![Pricing Layer](docs/screenshots/02_capa_precio.png) | ![Trends](docs/screenshots/03_historia_tendencias.png) |
+
+### How to run
+
+```bash
+uv sync
+uv run streamlit run src/vitali/dashboard/app.py
+```
+
+The app loads from local gitignored data files. No API keys or external services required.
+
+> **Methodology note:** This dashboard is a decision-support tool, not an automatic pricing engine or formal financial statement. All monetary recommendations include explicit uncertainty ranges and Yellow Gate warnings where applicable.
