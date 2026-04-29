@@ -20,10 +20,6 @@ All outputs are surfaced through an interactive dashboard designed for decision 
 
 ## Dashboard
 
-| Executive summary | Pricing reference | Trends and history |
-|---|---|---|
-| ![Executive summary](assets/screenshots/01_resumen_ejecutivo.png) | ![Pricing reference](assets/screenshots/02_capa_precio.png) | ![History and trends](assets/screenshots/03_historia_tendencias.png) |
-
 Main views in the current demo:
 
 - **Business Summary** — key metrics at a glance: nightly median rate, top-performing unit, peak month, total reservations, income trend, and projected balance
