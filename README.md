@@ -89,7 +89,7 @@ An interactive decision-support dashboard built with Streamlit and Plotly. Provi
 
 | Executive Summary | Pricing Reference | History & Trends |
 |---|---|---|
-| ![Executive Summary](docs/screenshots/01_resumen_ejecutivo.png) | ![Pricing Layer](docs/screenshots/02_capa_precio.png) | ![Trends](docs/screenshots/03_historia_tendencias.png) |
+| ![Executive Summary](assets/screenshots/01_resumen_ejecutivo.png) | ![Pricing Layer](assets/screenshots/02_capa_precio.png) | ![Trends](assets/screenshots/03_historia_tendencias.png) |
 
 ### How to run
 
